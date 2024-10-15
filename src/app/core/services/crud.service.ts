@@ -17,20 +17,20 @@ export class CrudService {
    
     fetchData(url: any, payload?: Params ): Observable<any[]> {
 
-        return this.http.get<any[]>(`${environment.baseURL}${url}`, {params: payload});
+        return this.http.get<any[]>(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api${url}`, {params: payload});
     }
     
     addData(url: any, newData: any): Observable<any[]> {
-        return this.http.post<any[]>(`${environment.baseURL}${url}`, newData);
+        return this.http.post<any[]>(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api${url}`, newData);
     }
 
     updateData(url: any, updatedData: any): Observable<any[]> {
         delete updatedData.id;
-        return this.http.patch<any[]>(`${environment.baseURL}${url}`, updatedData);
+        return this.http.patch<any[]>(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api${url}`, updatedData);
     }
 
     deleteData(url: any): Observable<string> {
-        return this.http.delete<string>(`${environment.baseURL}${url}`);
+        return this.http.delete<string>(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api${url}`);
     }
 
     disableData(url: string, userId: string): Observable<string> {
