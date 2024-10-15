@@ -24,12 +24,12 @@ export class AuthfakeauthenticationService {
         return this.currentUserSubject.value;
     }
     register ( data: any){
-        return this.http.post<any>(`${environment.baseURL}/auth/register-merchant`, data );
+        return this.http.post<any>(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api/auth/register-merchant`, data );
 
     }
     login(loginKey: string, password: string) {
        
-        return this.http.post<any>(`${environment.baseURL}/auth/login`, { loginKey, password });
+        return this.http.post<any>(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api/auth/login`, { loginKey, password });
       
     }
     forgotPassword(email: string){
@@ -37,7 +37,7 @@ export class AuthfakeauthenticationService {
     }
     updateProfilePassword( oldPassword: string, newPassword: string){
        // const id = this.currentUserSubject.value.userId;
-         return this.http.post(`${environment.baseURL}/auth/change-password`,{oldPassword,newPassword});
+         return this.http.post(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api/auth/change-password`,{oldPassword,newPassword});
         
     }
     updatePassword(password: string, token: string){
@@ -50,11 +50,11 @@ export class AuthfakeauthenticationService {
    }
     updateProfile(user: any){
         console.log(user);
-        return this.http.patch(`${environment.baseURL}/users/${user.id}`,user) ;
+        return this.http.patch(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api/users/${user.id}`,user) ;
     }
 
     refreshToken(refreshToken: string): Observable<any> {
-        return this.http.post(`${environment.baseURL}/auth/refresh`, { refreshToken: refreshToken });
+        return this.http.post(`https://legislative-eveleen-infiniteee-d57d0fbe.koyeb.app/api/auth/refresh`, { refreshToken: refreshToken });
     }
     logout() {
         // remove user from local storage to log user out
