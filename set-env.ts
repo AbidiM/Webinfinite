@@ -16,6 +16,7 @@ const envConfigFile = `
 
 // Write the environment.ts file
 fs.writeFileSync('./src/environments/environment.ts', envConfigFile);
+fs.writeFileSync('./src/environments/environment.prod.ts', envConfigFile);
 console.log('Environment file generated successfully');
 // console.log({envConfigFile});
 
