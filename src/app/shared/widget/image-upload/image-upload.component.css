@@ -1,47 +1,89 @@
+/* General container styles for the upload component */
 .image-upload-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    border: 2px solid #ccc;
     border-radius: 8px;
     position: relative;
-    width: 100%; /* Ensure the container takes up the full width of its parent */
+    width: 100%;
+  }
   
-    /* Center the image preview inside the container and make it 50% of the width */
-    .image-preview {
-      margin-bottom: 20px; /* Space between the image and the file input */
-      width: 50%; /* Image takes 50% of the container width */
-      height: auto; /* Ensure the aspect ratio is preserved */
-      display: block;
-      margin-left: auto;
-      margin-right: auto; /* Center the image horizontally */
-      max-width: 100%; /* Ensure the image doesn't overflow the container */
-    }
+  /* Dashed border style applied when the container has a file */
+  .dashed-border {
+    border: 2px dashed #8d9196;  /* Blue dashed border */
+    background-color: #f4eeee;   /* Light gray background */
+    padding: 25px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
   
-    input[type="file"] {
-      margin-bottom: 10px;
-    }
+  /* Hidden input file */
+  input[type="file"] {
+    display: none;
+  }
   
-    .form-control-plaintext {
-      text-align: center;
-    }
+  /* Icon style */
+  .fas fa-cloud-upload-alt {
+    font-size: 50px;
+    color: #007bff;  /* Color of the upload icon */
+  }
   
-    &.dotted-border {
-      border: 2px dashed #007bff;
-      background-color: #f4eeee;
-      padding: 25px; /* Space between content and dotted border */
-      margin-bottom: 20px; /* Add space below the container */
-    }
+  /* Label style for the file input */
+  label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    cursor: pointer;
+    padding: 10px;
+  }
   
-    &.light-background {
-      background-color: #dfdada;
-    }
+  /* Text content inside the label */
+  label p {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #4b5563;  /* Default text color */
+  }
   
-    &.dark-background {
-      background-color: #333;
-      color: white;
-    }
+  /* Specific classes for different background types */
+  .light-background {
+    background-color: #dfdada;  /* Light gray background */
+  }
+  
+  .dark-background {
+    background-color: #333;   /* Dark background */
+    color: white;              /* White text */
+  }
+  
+  /* Styles for when a file has been selected */
+  .selected-file {
+    font-size: 14px;
+    color: #007bff;
+    font-weight: 500;
+    margin-top: 10px;
+  }
+  
+  /* For centering the content in the column */
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  /* Styles for handling drag-and-drop visual state */
+  .is-dragging {
+    background-color: rgba(0, 123, 255, 0.1);  /* Light blue background during drag */
+    border: 2px dashed #007bff;
+  }
+  
+  /* Customizing text under the upload container */
+  .text-gray-600 {
+    color: #4b5563;
   }
   

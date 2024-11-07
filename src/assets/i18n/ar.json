@@ -574,7 +574,7 @@
     "End Date is required": "تاريخ نهاية القسيمة مطلوب",
     "Upload Coupon Logo": "تحميل صورة القسيمة",
     "Coupon Logo is required":"تحميل صورة القسيمة مطلوب",
-    "Upload Merchant Logo":"تحميل صورة التاجر",
+    "Upload Merchant Logo":"تحميل شعارالتاجر",
     "Merchant Logo is required": " صورة التاجر مطلوبة",
     "Coupon Type": "نوع القسيمة",
     "Free": "مجاني",
@@ -742,7 +742,7 @@
     "Select a section": "حدد قسمًا",
     "Section is required": "القسم مطلوب",
     "Select_the_service_type": "اختر نوع الخدمة",
-    "QR Code": "رمز",
+    "QR Code": "QRرمز",
     "Merchant Picture":"صورة التاجر",
     "Merchant Picture is required": "صورة التاجر مطلوبة",
     "Bank Account Number": "رقم الحساب البنكي",
@@ -753,7 +753,8 @@
     "Twitter": "تويتر",
     "Instagram": "انستغرام",
     "Please complete all required fields.": ".يرجى إكمال كافة الحقول المطلوبة",
-    "Enter merchant phone": "أدخل رقم هاتف التاجر"
+    "Enter merchant phone": "أدخل رقم هاتف التاجر",
+    "Upload Merchant Picture":"تحميل صورة التاجر"
 
     
 

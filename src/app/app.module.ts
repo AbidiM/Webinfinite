@@ -81,7 +81,7 @@ export function createTranslateLoader(http: HttpClient): any {
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
+    //AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
     NgMultiSelectDropDownModule.forRoot(),
     TranslateModule.forRoot({

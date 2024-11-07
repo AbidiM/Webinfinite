@@ -132,9 +132,9 @@ export class CustomTableComponent  {
   }
 
   // Check if the value is a valid date string (but not a number)
-  if (typeof value === 'string' && !isNaN(Date.parse(value))) {
-    return this.DatePipe.transform(value, 'short'); 
-  }
+  // if (typeof value === 'string' && !isNaN(Date.parse(value))) {
+  //   return this.DatePipe.transform(value, 'short'); 
+  // }
 
 
   return value;

@@ -7,11 +7,20 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ImageUploadComponent {
 
-  @Output() imageUploaded = new EventEmitter<string>();
+  @Output() imageUploaded = new EventEmitter<any>();
+  @Output() logoUploaded = new EventEmitter<any>();
+
   @Input() disabled: boolean = false;
   @Input() existantImage: string = null;
   @Input() filename: string = '';
+  @Input() label: string = '';
+  @Input() id: string = '';
+  @Input() type: string = '';
+
+
+
   @Input() alt: string = '';
+  selectedFile: string | null = null;
 
 
 
@@ -33,7 +42,15 @@ export class ImageUploadComponent {
     const reader = new FileReader();
     reader.onload = () => {
       // Emit the result (base64 string) to the parent component
-      this.imageUploaded.emit(reader.result as string);
+      this.selectedFile = reader.result as string
+      if(this.type === 'logo'){
+        console.log('logo');
+        this.logoUploaded.emit({file: this.selectedFile, type: this.type});
+      }
+      else if(this.type === 'image') {
+        this.imageUploaded.emit({file: this.selectedFile, type: this.type});
+
+      }
     };
     reader.onerror = (error) => {
       console.error('Error reading file:', error);

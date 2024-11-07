@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -53,10 +53,13 @@ export class FormMerchantComponent implements OnInit {
   filteredAreas :  any[] = [];
   filteredCities:  any[] = [];
   serviceTypes: any[] = ['company', 'entreprise'];
-  
+  originalMerchantData: any = {}; 
+
   fieldTextType: boolean  = false;;
   confirmFieldTextType: boolean = false;
- 
+  @ViewChild('formTop', { static: false }) formTop: ElementRef;
+  @ViewChild('formElement', { static: false }) formElement: ElementRef;
+
   constructor(
     private formBuilder: UntypedFormBuilder, 
     private route: ActivatedRoute, 
@@ -166,6 +169,7 @@ export class FormMerchantComponent implements OnInit {
         .pipe(select(selectedMerchant), takeUntil(this.destroy$))
         .subscribe((merchant: any) => {
           if (merchant) {
+            console.log(merchant);
 
            
             this.existantmerchantLogo = merchant.merchantLogo;
@@ -182,7 +186,7 @@ export class FormMerchantComponent implements OnInit {
             this.merchantForm.patchValue(merchant);
             this.globalId = merchant.id;
             this.merchantForm.patchValue(merchant.user);
-            
+            this.originalMerchantData = { ...merchant };
             this.isEditing = true;
 
           }
@@ -212,7 +216,9 @@ export class FormMerchantComponent implements OnInit {
   
 
   onChangeCountrySelection(event: any){
-    const country = event.target.value;
+    console.log(event);
+    
+    const country = event.id;
     if(country){
       this.arealist$.subscribe(
         areas => 
@@ -225,7 +231,7 @@ export class FormMerchantComponent implements OnInit {
     
   }
   onChangeAreaSelection(event: any){
-    const area = event.target.value;
+    const area = event.id;
     if(area){
       this.citylist$.subscribe(
         cities => 
@@ -252,7 +258,7 @@ export class FormMerchantComponent implements OnInit {
       //const formValue = this.merchantForm.value;
       const merchant: any = {
       
-          id : Number(formValue.id),
+          id : Number(this.globalId),
           username: formValue.username,
           email: formValue.email,
           password: formValue.password,
@@ -287,6 +293,26 @@ export class FormMerchantComponent implements OnInit {
             merchant.twitter = Number(formValue.whatsup);
           }
           return merchant;
+  }
+ 
+  /**
+   * 
+   * Change Detection in form field
+   */
+  detectChanges(): any {
+    const updatedData = {};
+
+    // Compare each field and add only the modified fields
+    for (const key in this.merchantForm.controls) {
+      if (this.merchantForm.controls[key].dirty) {
+        // Check if the value is different from the original
+        if (this.merchantForm.controls[key].value !== this.originalMerchantData[key]) {
+          updatedData[key] = this.merchantForm.controls[key].value;
+        }
+      }
+    }
+    console.log(updatedData);
+    return updatedData;
   }
     
   /**
@@ -333,10 +359,37 @@ export class FormMerchantComponent implements OnInit {
         else
         { 
           delete this.merchant.password;
-          this.store.dispatch(updateMerchantlist({ updatedData: this.merchant }));
+          delete this.merchant.email;
+          const updatedDta = this.detectChanges();
+          if (Object.keys(updatedDta).length > 0) {
+            console.log(updatedDta);
+            updatedDta.id = this.globalId;
+            this.store.dispatch(updateMerchantlist({ updatedData: updatedDta }));
+          }
+          else{
+            this.formError = 'Nothing has been changed!!!';
+            this.scrollToTopOfForm();
+          }
         }
       
     
+  }
+  scrollToTopOfForm(): void {
+    // First, scroll to the form element (or to the input element at the top)
+    if (this.formElement) {
+     
+        window.scrollTo({
+        top: this.formElement.nativeElement.offsetTop - 50, // Scroll position minus offset for margin/padding if needed
+        behavior: 'smooth', // Smooth scroll
+      });
+    }
+
+    
+  }
+  private focusOnTopForm(): void {
+      if (this.formTop) {
+        this.formTop.nativeElement.focus();  // Focus on the element with reference #formTop
+      }
   }
   private focusOnFirstInvalid() {
     const firstInvalidControl = this.getFirstInvalidControl();
@@ -366,49 +419,28 @@ export class FormMerchantComponent implements OnInit {
     toggleConfirmFieldTextType() {
       this.confirmFieldTextType = !this.confirmFieldTextType;
     }
-  /**
-   * File Upload Image
-   */
- 
   
-  async fileChange(event: any): Promise<string> {
-    let fileList: any = (event.target as HTMLInputElement);
-    let file: File = fileList.files[0];
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
-      reader.onerror = () => {
-        reject(reader.error);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-  
-  /**
-   * Store Merchant Logo
-   */
-   onLogoUploaded(event: any){
-      
-      this.storeLogoBase64 = event;
-      this.fileName1 = ''; // Set the file name
-      this.existantmerchantLogo = event;
-      this.merchantForm.controls['merchantLogo'].setValue(this.existantmerchantLogo);
 
-  }
-  /**
-   * Store Merchant Picture
-   */
-  onPictureUploaded(event: any){
-     
-      this.merchantPictureBase64 = event;
-      this.fileName2 = ''; // Set the file name
-      this.existantmerchantPicture = event;
-      this.merchantForm.controls['merchantPicture'].setValue(this.existantmerchantPicture);
   
+    onImageUpload(event: any): void {
+      if (event.type === 'image') {
+        // Handle Merchant Picture Upload
+        this.merchantPictureBase64 = event.file;
+        this.fileName2 = ''; // Set the file name
+        this.existantmerchantPicture = event.file;
+        this.merchantForm.controls['merchantPicture'].setValue(this.existantmerchantPicture);
+      }
+    }
     
-  }
+    onLogoUpload(event: any): void {
+      if (event.type === 'logo') {
+        // Handle Logo Upload
+        this.storeLogoBase64 = event.file;
+        this.fileName1 = ''; // Set the file name
+        this.existantmerchantLogo = event.file;
+        this.merchantForm.controls['merchantLogo'].setValue(this.existantmerchantLogo);
+      }
+    }
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

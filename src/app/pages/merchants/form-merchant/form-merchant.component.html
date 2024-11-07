@@ -3,11 +3,13 @@
     <span class="visually-hidden">{{'Loading...' | translate}}</span>
   </div>
 </div>   
-<div class="row">
+<div #formElement class="row">
     <div class="col-19">
         <div class="card">
-            <div class="card-body ">
-              <form  [formGroup]="merchantForm"  class="m-4">
+            <div  class="card-body ">
+              
+              <form   [formGroup]="merchantForm"  class="m-4">
+                
                 <div *ngIf="formError" class="alert alert-danger">{{ formError | translate}}</div>
                 <div class="row">
 
@@ -43,7 +45,7 @@
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
                       <label for="email">{{'Email' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                      <input  type="email" id="email" class="form-control" formControlName="email" placeholder="{{ 'Enter the email' | translate }}" required [readonly]="type==='view'">
+                      <input  type="email" id="email" class="form-control" formControlName="email" placeholder="{{ 'Enter the email' | translate }}" required [readonly]="type==='view' ||type==='edit' ">
                       <div *ngIf="merchantForm.get('email').touched && merchantForm.get('email').invalid" class="invalid-feedback d-block">
                         <span *ngIf="merchantForm.get('email').errors?.['required']">{{'Please enter the email'| translate}}.</span>
                       </div>
@@ -200,7 +202,7 @@
                         <label for="merchantLogo">{{ 'Merchant Logo' | translate }}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                     
                         <!-- File input for selecting or uploading a new image -->
-                        <app-image-upload [existantImage]="existantmerchantLogo" [filename]="fileName1" [alt]="'Merchant Logo'" [disabled]="type ==='view'" (imageUploaded)="onLogoUploaded($event)"></app-image-upload>
+                        <app-image-upload [id]="'merchantLogo'" [type]="'logo'" [label]="'Upload Merchant Logo' | translate" [existantImage]="existantmerchantLogo" [filename]="fileName1" [alt]="'Merchant Logo'" [disabled]="type ==='view'" (logoUploaded)="onLogoUpload($event)"></app-image-upload>
                      
                         <div *ngIf="merchantForm.get('merchantLogo').touched && merchantForm.get('merchantLogo').invalid" class="invalid-feedback d-block">
                           <span *ngIf="merchantForm.get('merchantLogo').errors?.['required']">{{'Merchant Logo is required'| translate}}.</span>
@@ -212,7 +214,7 @@
                       <div class="form-group">
                         <label for="merchantPicture">{{'Merchant Picture' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                          
-                        <app-image-upload  [existantImage]="existantmerchantPicture" [filename]="fileName2" [alt]="'Merchant Pictutre'" [disabled]="type ==='view'" (imageUploaded)="onPictureUploaded($event)"></app-image-upload>
+                        <app-image-upload [id]="'merchantPicture'" [type]="'image'" [label]="'Upload Merchant Picture' | translate" [existantImage]="existantmerchantPicture" [filename]="fileName2" [alt]="'Merchant Pictutre'" [disabled]="type ==='view'" (imageUploaded)="onImageUpload($event)"></app-image-upload>
 
                         <div *ngIf="merchantForm.get('merchantPicture').touched && merchantForm.get('merchantPicture').invalid" class="invalid-feedback d-block">
                           <span *ngIf="merchantForm.get('merchantPicture').errors?.['required']">{{'Merchant Picture is required'| translate}}.</span>

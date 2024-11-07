@@ -1,15 +1,29 @@
-<div class="image-upload-container" >
-    <!-- Image preview section -->
-    <div *ngIf="existantImage" class="image-preview">
-      <img [src]="existantImage" [alt]="alt" class="img-fluid" width="200">
-    </div>
+<div
+
+class="image-upload-container dashed-border"
+  
+>
+  <label
     
-<input 
-    type="text"
-    class="form-control-plaintext mt-2"
-    [value]="filename"
-    readonly
+    class="flex-center"
   >
-</div> 
- <input   type="file" [disabled]="disabled" class="form-control" accept="image/png, image/gif, image/jpeg" (change)="fileChange($event)" >
- 
+    <input
+      type="file"
+      [id]="id"
+      (change)="fileChange($event)"
+    />
+    <div class="flex-center">
+      <em class="fas fa-cloud-upload-alt text-gray-600 fs-30"></em>
+      <div>
+        <p *ngIf="selectedFile || existantImage; else defaultText" class="selected-file">
+            <img [src]="selectedFile || existantImage" [alt]="alt" class="img-fluid" width="200">
+        </p>
+        <ng-template #defaultText>
+          <p class="mt-2 text-sm font-medium fs-15">
+            {{ label }}
+          </p>
+        </ng-template>
+      </div>
+    </div>
+  </label>
+</div>
