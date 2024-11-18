@@ -1,15 +1,15 @@
 // src/app/GiftCardlist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addGiftCardlist, addGiftCardlistFailure, addGiftCardlistSuccess, deleteGiftCardlist, deleteGiftCardlistFailure, deleteGiftCardlistSuccess, fetchGiftCardlistData, fetchGiftCardlistFail, fetchGiftCardlistSuccess, getGiftCardById, getGiftCardByIdFailure, getGiftCardByIdSuccess, updateGiftCardlist, updateGiftCardlistFailure, updateGiftCardlistSuccess } from './giftCard.action';
-import { GiftCardListModel } from './giftCard.model';
+import { GiftCard } from './giftCard.model';
 
 export interface GiftCardlistState {
-  GiftCardListdata: any[];
+  GiftCardListdata: GiftCard[];
   currentPage: number;
   totalItems: number;
-  selectedGiftCard: any;
+  selectedGiftCard: GiftCard;
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: GiftCardlistState = {
@@ -23,7 +23,7 @@ export const initialState: GiftCardlistState = {
 
 export const GiftCardListReducer = createReducer(
   initialState,
-  on(fetchGiftCardlistData, (state, { page, itemsPerPage }) => ({
+  on(fetchGiftCardlistData, (state, { page }) => ({
     ...state,
     currentPage: page,
     loading: true,

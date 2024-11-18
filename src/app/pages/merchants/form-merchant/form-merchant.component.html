@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div id="elmLoader" class="loader" *ngIf="loading$ | async">
   <div class="spinner-border text-primary avatar-sm" role="status">
     <span class="visually-hidden">{{'Loading...' | translate}}</span>
@@ -7,10 +9,8 @@
     <div class="col-19">
         <div class="card">
             <div  class="card-body ">
-              
               <form   [formGroup]="merchantForm"  class="m-4">
-                
-                <div *ngIf="formError" class="alert alert-danger">{{ formError | translate}}</div>
+               <div *ngIf="formError" class="alert alert-danger">{{ formError | translate}}</div>
                 <div class="row">
 
                   <div class="col-md-6 mb-3">
@@ -45,7 +45,7 @@
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
                       <label for="email">{{'Email' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                      <input  type="email" id="email" class="form-control" formControlName="email" placeholder="{{ 'Enter the email' | translate }}" required [readonly]="type==='view' ||type==='edit' ">
+                      <input  type="email" id="email" class="form-control" formControlName="email" placeholder="{{ 'Enter the email' | translate }}" required [readonly]="type!=='create'">
                       <div *ngIf="merchantForm.get('email').touched && merchantForm.get('email').invalid" class="invalid-feedback d-block">
                         <span *ngIf="merchantForm.get('email').errors?.['required']">{{'Please enter the email'| translate}}.</span>
                       </div>
@@ -53,7 +53,7 @@
                   </div>
                
                               
-                  <div *ngIf="type == 'create'" class="col-md-6 mb-3">
+                  <div *ngIf="type === 'create'" class="col-md-6 mb-3">
                     <div class="form-group ">
                         <div class="form-group ">
                           <label for="password" >{{'Password' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
@@ -70,7 +70,7 @@
                     </div>
                     </div>
 
-                  <div *ngIf="type == 'create'" class="col-md-6 mb-3">
+                  <div *ngIf="type === 'create'" class="col-md-6 mb-3">
                       <div class="form-group ">
                         <div class="form-group ">
                           <label for="confpassword" >{{'Confirm Password' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
@@ -90,7 +90,7 @@
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
                       <label for="id_number" >{{'National ID' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                      <input type="text" id="id_number" class="form-control" formControlName="id_number" placeholder="{{ 'Enter your National ID number' | translate }}" required [readonly]="type==='view'">
+                      <input type="number" id="id_number" class="form-control" formControlName="id_number" placeholder="{{ 'Enter your National ID number' | translate }}" required [readonly]="type==='view'">
                       <div *ngIf="merchantForm.get('id_number').touched && merchantForm.get('id_number').invalid" class="invalid-feedback d-block">
                           <span *ngIf="merchantForm.get('id_number').errors?.['required']">{{'id_number is required'| translate}}.</span>
                         </div>
@@ -116,8 +116,7 @@
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
                         <label for="serviceType">{{'Service Type' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                        <input *ngIf="type === 'view'" type="text" id="serviceType"  class="form-control" formControlName="serviceType"  [readonly]="type==='view'">
-                        <ng-select [hidden]="type === 'view'" placeholder="{{'Select service type' |translate}}" id="serviceType"  [items]="serviceTypes" formControlName="serviceType"  >
+                        <ng-select [readonly]="type === 'view'" placeholder="{{'Select service type' |translate}}" id="serviceType"  [items]="serviceTypes" formControlName="serviceType"  >
                         </ng-select>
                         <div *ngIf="merchantForm.get('serviceType').touched && merchantForm.get('serviceType').invalid" class="invalid-feedback d-block">
                         <span *ngIf="merchantForm.get('serviceType').errors?.['required']">{{'Service Type is required'| translate}}.</span>
@@ -162,13 +161,7 @@
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
                         <label for="section_id">{{'Merchant Section' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                        <input *ngIf="type === 'view'"
-                          type="text" 
-                          class="form-control" 
-                          [value]="getSectionName(merchantForm.get('section_id').value)" 
-                          readonly 
-                        />
-                        <ng-select [hidden]="type === 'view'" placeholder="{{'Select a section' | translate}}" [items]="sectionlist" bindLabel="name" 
+                        <ng-select [readonly]="type === 'view'" placeholder="{{'Select a section' | translate}}" [items]="sectionlist" bindLabel="translatedName" 
                         bindValue="id" id="section_id"  formControlName="section_id">
                         </ng-select>
                         <div *ngIf="merchantForm.get('section_id').touched && merchantForm.get('section_id').invalid" class="invalid-feedback d-block">
@@ -225,13 +218,7 @@
                   <div class="col-md-6 mb-3">
                     <div class="form-group">
                       <label for="country_id" >{{'Country' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                      <input *ngIf="type === 'view'"
-                      type="text" 
-                      class="form-control" 
-                      [value]="getCountryName(merchantForm.get('country_id').value)" 
-                      readonly 
-                  />
-                      <ng-select [hidden]="type === 'view'" id="country_id" placeholder="{{'Select_the_Country' | translate}}" [items]="filteredCountries" bindLabel="name" 
+                      <ng-select [readonly]="type === 'view'" id="country_id" placeholder="{{'Select_the_Country' | translate}}" [items]="filteredCountries" bindLabel="translatedName" 
                       bindValue="id" formControlName="country_id" (change)="onChangeCountrySelection($event)" >
                      </ng-select>  
                       <div *ngIf="merchantForm.get('country_id').touched && merchantForm.get('country_id').invalid" class="invalid-feedback d-block">
@@ -243,13 +230,7 @@
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
                         <label for="area_id">{{'Area' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                        <input *ngIf="type === 'view'"
-                          type="text" 
-                          class="form-control" 
-                          [value]="getAreaName(merchantForm.get('area_id').value)" 
-                          readonly 
-                      />
-                        <ng-select  [hidden]="type === 'view'" id="area_id" placeholder="{{'Select_the_Area' | translate}}" [items]="filteredAreas" bindLabel="name" 
+                        <ng-select  [readonly]="type === 'view'" id="area_id" placeholder="{{'Select_the_Area' | translate}}" [items]="filteredAreas" bindLabel="translatedName" 
                         bindValue="id" formControlName="area_id" (change)="onChangeAreaSelection($event)" >
                         </ng-select> 
                         <div *ngIf="merchantForm.get('area_id').touched && merchantForm.get('area_id').invalid" class="invalid-feedback d-block">
@@ -261,13 +242,7 @@
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
                       <label for="city_id" >{{'City' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                      <input *ngIf="type === 'view'"
-                      type="text" 
-                      class="form-control" 
-                      [value]="getCityName(merchantForm.get('city_id').value)" 
-                      readonly 
-                  />
-                      <ng-select [hidden]="type === 'view'" id="city_id" placeholder="{{'Select_the_City' | translate}}" [items]="filteredCities" bindLabel="name" 
+                      <ng-select [readonly]="type === 'view'" id="city_id" placeholder="{{'Select_the_City' | translate}}" [items]="filteredCities" bindLabel="translatedName" 
                       bindValue="id" formControlName="city_id"  >
                       </ng-select>  
                       <div *ngIf="merchantForm.get('city_id').touched && merchantForm.get('city_id').invalid" class="invalid-feedback d-block">
@@ -279,19 +254,17 @@
                   <div class="col-md-6 mb-3">
                     <div class="form-group">
                       <label for="bankAccountNumber">{{'Bank Account Number' | translate}}</label>
-                      <input type="text" id="bankAccountNumber" class="form-control" placeholder="{{ 'Enter Bank Account Number' | translate }}" formControlName="bankAccountNumber" [readonly]="type==='view'">
+                      <input type="number" id="bankAccountNumber" class="form-control" placeholder="{{ 'Enter Bank Account Number' | translate }}" formControlName="bankAccountNumber" [readonly]="type==='view'">
                     </div>
                   </div>
-
-                  
+                 
                   <div class="col-md-6 mb-3">
                     <div class="form-group">
                       <label for="website">{{'Merchant Website' | translate}}</label>
                       <input type="text" id="website" class="form-control" formControlName="website" placeholder="https://example.com" [readonly]="type==='view'">
                     </div>
                   </div>
-               
-            
+                      
               
                 <div class="col-md-6 mb-3">
                   <div class="form-group">
@@ -326,7 +299,7 @@
                 <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end">
                       <div class="d-flex justify-content-end">
-                        <ng-container *ngIf="type =='view'; else editModeButtons">
+                        <ng-container *ngIf="type ==='view'; else editModeButtons">
                           <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                         </ng-container>
                         <ng-template #editModeButtons>

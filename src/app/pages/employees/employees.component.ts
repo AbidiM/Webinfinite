@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Observable } from 'rxjs';
 import { selectData, selectDataLoading, selectDataTotalItems } from 'src/app/store/employee/employee-selector';
 import { deleteEmployeelist, fetchEmployeelistData, updateEmployeelist } from 'src/app/store/employee/employee.action';
+import { Employee } from 'src/app/store/employee/employee.model';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
 
 @Component({
@@ -14,26 +16,27 @@ import { Modules, Permission } from 'src/app/store/Role/role.models';
 export class EmployeesComponent implements OnInit {
 
   // bread crumb items
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
   public Modules = Modules;
   public Permission = Permission;
 
-  EmployeeList$: Observable<any[]>;
+  EmployeeList$: Observable<Employee[]>;
   totalItems$: Observable<number>;
-  loading$: Observable<any>
+  loading$: Observable<boolean>;
 
 
   isDropdownOpen : boolean = false;
-  filteredArray: any[] = [];
-  originalArray: any[] = [];
+  filteredArray: Employee[] = [];
+  originalArray: Employee[] = [];
 
   itemPerPage: number = 10;
   currentPage : number = 1;
 
   columns : any[]= [
-    { property: 'username', label: 'Employee Name' },
+    { property: 'translation_data[0].f_name', label: 'First_Name_tab' },
+    { property: 'translation_data[0].l_name', label: 'Last_Name_tab' },
     { property: 'email', label: 'Email' },
-    { property: 'role.name', label: 'Role' },
+    { property: 'role.translation_data[0].name', label: 'Role' },
     { property: 'status', label: 'Status' },
   ];
 

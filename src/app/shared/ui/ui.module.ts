@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 
@@ -33,6 +33,7 @@ import { DirectiveModule } from '../directive/directive.module';
     TimepickerModule.forRoot(),
     BsDropdownModule.forRoot()
   ],
-  exports: [PagetitleComponent, LoaderComponent, CustomTableComponent]
+  exports: [PagetitleComponent, LoaderComponent, CustomTableComponent],
+ providers:[DatePipe] 
 })
 export class UIModule { }

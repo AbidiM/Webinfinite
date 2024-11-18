@@ -14,15 +14,14 @@ import { ContactsRoutingModule } from './contacts-routing.module';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { UsergridComponent } from './usergrid/usergrid.component';
-import { UserlistComponent } from './userlist/userlist.component';
+
 import { ProfileComponent } from './profile/profile.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CompanyProfileComponent } from './company-profile/company-profile.component';
 
 @NgModule({
-  declarations: [UsergridComponent, UserlistComponent, ProfileComponent, CompanyProfileComponent],
+  declarations: [ ProfileComponent, CompanyProfileComponent],
   imports: [
     CommonModule,
     TranslateModule,

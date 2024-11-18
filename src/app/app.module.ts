@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,21 +30,13 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Auth
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
-import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { rootReducer } from './store';
-import { OrderEffects } from './store/orders/order.effects';
 import { AuthenticationEffects } from './store/Authentication/authentication.effects';
-import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { CartEffects } from './store/Cart/cart.effects';
-import { usersEffects } from './store/UserGrid/user.effects';
-import { userslistEffects } from './store/UserList/userlist.effect';
+
 import { CandidateEffects } from './store/Candidate/candidate.effects';
-import { InvoiceDataEffects } from './store/Invoices/invoice.effects';
-import { ChatEffects } from './store/Chat/chat.effect';
-import { OrdersEffects } from './store/Crypto/crypto.effects';
+
 import { CustomerEffects } from './store/customer/customer.effects';
-import { MailEffects } from './store/Email/email.effects';
 import { MerchantsModule } from './pages/merchants/merchants.module';
 import { MerchantslistEffects1 } from './store/merchantsList/merchantlist1.effect';
 import { CouponsModule } from './pages/coupons/coupons.module';
@@ -63,7 +56,19 @@ import { NotificationsModule } from './pages/notifications/notifications.module'
 import { RolesEffects } from './store/Role/role.effects';
 import { SectionEffects } from './store/section/section.effect';
 import { GiftCardsEffects } from './store/giftCard/giftCard.effect';
+//import { ThemeService } from './core/services/theme.service';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
+import { DropzoneModule } from 'ngx-dropzone-wrapper';
+import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+  // Change this to your upload POST address:
+  url: 'https://httpbin.org/post',
+  maxFilesize: 50,
+  acceptedFiles: 'image/*'
+};
 
 
 
@@ -77,7 +82,9 @@ export function createTranslateLoader(http: HttpClient): any {
     CyptolandingComponent
   ],
   imports: [
-    
+    NgxMaskDirective,
+    NgxMaskPipe,
+    DropzoneModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -113,22 +120,17 @@ export function createTranslateLoader(http: HttpClient): any {
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
     EffectsModule.forRoot([
-      OrderEffects,
+      
       AuthenticationEffects,
-      CartEffects,
-      usersEffects,
-      userslistEffects,
+ 
       EmployeeslistEffects,
       CouponslistEffects,
       MerchantslistEffects1,
       StoreslistEffects,
       countrieslistEffects,
       CandidateEffects,
-      InvoiceDataEffects,
-      ChatEffects,
-      OrdersEffects,
+     
       CustomerEffects,
-      MailEffects,
       AreaEffects,
       CityEffects,
       NotificationsEffects,
@@ -144,6 +146,19 @@ export function createTranslateLoader(http: HttpClient): any {
    // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     provideAnimationsAsync('noop'),
     //{ provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
-  ],
+    provideNgxMask(),
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    }],
 })
-export class AppModule { }
+export class AppModule { 
+
+  // constructor(private translateService: TranslateService,private themeService: ThemeService) {
+  //   // Set default language to Arabic ('ar')
+  //   this.translateService.setDefaultLang('ar');
+  //   this.translateService.use('ar');  // Automatically use Arabic on app load
+  //   this.themeService.loadRtlStyles();
+
+  // }
+}

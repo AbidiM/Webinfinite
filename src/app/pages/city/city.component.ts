@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 
@@ -8,6 +10,7 @@ import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { deleteCitylist, fetchCitylistData, updateCitylist } from 'src/app/store/City/city.action';
 import { selectDataCity, selectDataLoading, selectDataTotalItems } from 'src/app/store/City/city-selector';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
+import { City } from 'src/app/store/City/city.model';
 
 
 @Component({
@@ -22,20 +25,20 @@ export class CityComponent  implements OnInit {
   public Modules = Modules;
   public Permission = Permission;
 
-  citiesList$: Observable<any[]>;
+  citiesList$: Observable<City[]>;
   totalItems$: Observable<number>;
-  loading$: Observable<any>
+  loading$: Observable<boolean>;
 
   isDropdownOpen : boolean = false;
-  filteredArray: any[] = [];
-  originalArray: any[] = [];
+  filteredArray: City[] = [];
+  originalArray: City[] = [];
 
   itemPerPage: number = 10;
   currentPage : number = 1;
   
   columns : any[]= [
-    { property: 'name', label: 'Name' },
-    { property: 'area.name', label: 'Area' },
+    { property: 'translation_data[0].name', label: 'Name' },
+    { property: 'area.translation_data[0].name', label: 'Area' },
     { property: 'status', label: 'Status' },
   ];
   
@@ -71,7 +74,7 @@ export class CityComponent  implements OnInit {
     
   }
 
-  onDelete(id: any) {
+  onDelete(id: number) {
     this.store.dispatch(deleteCitylist({ CityId: id }));
   }
 

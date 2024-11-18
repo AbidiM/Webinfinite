@@ -1,9 +1,16 @@
-export interface AreaListModel {
+import { PaginateModel, Translation } from "src/app/core/interfaces/core.interface";
+
+export interface AreaListModel  extends PaginateModel
+{   
+    data?: Area[]; 
+}
+export interface Area {
     
-     id?: string;
-     name?: string;
-     nameTrans?: string;
-     country_id?: string;
+     id?: number;
+     translation_data?: Translation[];
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     country?: any;
+     country_id?: number;
      status? : string;
      updatedAt? :  string;
      createdAt?: string;

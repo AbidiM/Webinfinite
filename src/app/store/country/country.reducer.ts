@@ -1,14 +1,15 @@
 // src/app/Countrylist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addCountrylist, addCountrylistFailure, addCountrylistSuccess, deleteCountrylist, deleteCountrylistFailure, deleteCountrylistSuccess, fetchCountrylistData, fetchCountrylistFail, fetchCountrylistSuccess, getCountryById, getCountryByIdFailure, getCountryByIdSuccess, updateCountrylist, updateCountrylistFailure, updateCountrylistSuccess } from './country.action';
+import { Country } from './country.model';
 
 export interface CountrylistState {
-  CountryListdata: any[];
+  CountryListdata: Country[];
   currentPage: number;
   totalItems: number;
-  selectedCountry: any,
+  selectedCountry: Country,
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: CountrylistState = {
@@ -22,7 +23,7 @@ export const initialState: CountrylistState = {
 
 export const CountryListReducer = createReducer(
   initialState,
-  on(fetchCountrylistData,  (state, { page, itemsPerPage, status }) => ({
+  on(fetchCountrylistData,  (state, { page }) => ({
     ...state,
     currentPage: page,
     loading: true,

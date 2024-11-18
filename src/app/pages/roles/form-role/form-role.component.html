@@ -1,8 +1,13 @@
-<div class="row">
+<div id="elmLoader" class="loader" *ngIf="loading$ | async">
+    <div class="spinner-border text-primary avatar-sm" role="status">
+      <span class="visually-hidden">{{'Loading...' | translate}}</span>
+    </div>
+  </div>
+<div #formElement class="row">
     <div class="col-19">
         <div class="card">
             <div class="card-body ">
-                <form #formElement [formGroup]="roleForm"  >
+                <form [formGroup]="roleForm"  >
                     <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -14,26 +19,34 @@
                               </div>
                           </div> 
                       </div>
-                 
+                      <div class="col-md-6 mb-3">
+                        <div class="form-group ">
+                           <label for="name_ar" >{{'role_name in arabic' | translate}} <span  *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                            <input type="text" id="name_ar" class="form-control" formControlName="name_ar" [readonly]="type==='view'" >
+                            <div *ngIf="roleForm.get('name_ar').touched && roleForm.get('name_ar').invalid" class="invalid-feedback d-block">
+                                <span *ngIf="roleForm.get('name_ar').errors?.['required']">{{'role name in arabic is required'| translate}}.</span>
+                              </div>
+                          </div> 
+                      </div>
                       <div class="table-responsive mt-3">
                         <table class="table align-middle table-nowrap table-hover dt-responsive nowrap w-100" style="border: 1px solid #ddd; border-collapse: collapse;">
                             <thead class="table-light">
                                 <tr>
                                     <th>{{ 'Permissions' | translate }}</th>
                                     <th *ngFor="let permission of permissionKeys">
-                                        {{ permission }}
+                                        {{ permission | translate }}
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let module of moduleKeys">
-                                    <td *ngIf="module == 'All'; else otherModules" >
+                                    <td *ngIf="module === 'All'; else otherModules" >
                                         <input class="me-2" type="checkbox" [checked] ="ALLModulesChecked" (change)="toggleGlobalAll($event.target.checked)"  />
-                                        <strong>{{ module }}</strong>
+                                        <strong>{{ module | translate }}</strong>
                                     </td>
                                     <ng-template #otherModules>
                                       <td >
-                                          <strong>{{ module }}</strong>
+                                          <strong>{{ module | translate }}</strong>
                                       </td>
                                   </ng-template>
                                     <td *ngFor="let permission of permissionKeys">
@@ -54,16 +67,16 @@
               </div>
                 <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end">
-                        <ng-container *ngIf="type =='view'; else editModeButtons">
+                        <ng-container *ngIf="type ==='view'; else editModeButtons">
                               <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                          </ng-container>
                         <ng-template #editModeButtons>
                         <button type="button" id="cancel-btn" class="btn btn-outline-secondary me-2" (click)="onCancel()">{{'Cancel'|translate}}</button>
-                        <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type == 'create' ? 'Add_role' : 'update_role') | translate }}
+                        <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type ==='create' ? 'Add_role' : 'update_role') | translate }}
                         </button>
                         <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                             <div class="spinner-border text-primary avatar-sm" role="status">
-                              <span class="visually-hidden">Loading...</span>
+                              <span class="visually-hidden">{{'Loading...' | translate}}</span>
                             </div>
                           </div> 
                         </ng-template>    

@@ -12,7 +12,8 @@ export class CustomerEffects {
             ofType(fetchCustomerData),
             mergeMap(() =>
                 this.CrudService.fetchData('/app/customersData').pipe(
-                    map((customer) => fetchCustomerSuccess({ customer })),
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    map((customer: any) => fetchCustomerSuccess({ customer })),
                     catchError((error) =>
                         of(fetchCustomerFail({ error }))
                     )

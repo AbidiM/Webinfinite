@@ -12,11 +12,11 @@ export const selectDataTotalItems = createSelector(
   selectDataState,
   (state: RolelistState) => state?.totalItems || 0
 );
-export const selectRoleById = (RoleId: string) =>createSelector(
+export const selectRoleById = createSelector(
   selectDataState,
-  (state: RolelistState) =>  state?.RoleListdata.find(Role => Role.id === +RoleId)
+  (state: RolelistState) =>  state?.selectedRole || null
   );
-
+  
 export const selectDataLoading = createSelector(
   selectDataState,
   (state: RolelistState) => state?.loading || false

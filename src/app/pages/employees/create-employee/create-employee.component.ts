@@ -8,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 export class CreateEmployeeComponent implements OnInit {
 
   // bread crumb items
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
 
   ngOnInit() {
-    this.breadCrumbItems = [{ label: 'Employees' }, { label: 'Add employee', active: true }];
+    this.breadCrumbItems = [{ label: 'Employees' }, { label: 'Add_employee', active: true }];
   }
 }

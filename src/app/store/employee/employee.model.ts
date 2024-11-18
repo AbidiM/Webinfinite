@@ -1,20 +1,26 @@
-import { _User } from "../Authentication/auth.models";
-import {  RoleListModel } from "../Role/role.models";
+import { PaginateModel, Translation } from "src/app/core/interfaces/core.interface";
+import {  Role } from "../Role/role.models";
+import { City } from "../City/city.model";
 
-export interface EmployeeListModel {
+export interface EmployeeListModel  extends PaginateModel
+{   
+    data?: Employee[]; 
+}
+export interface Employee {
     
-        id?: string;
-        name?: string;
+        id?: number;
+        translation_data?: Translation[];
         email?: string;
         phone?: string;
         password?: string;
-        country?: any;// Country;
-        area?: any;// Area;
-        city?: any; // City;
+        image?: string;
+        city_id?: number; // City;
+        city?: City;
+        bank_id?: number;
         bankAccountNumber?: string;
         bankName?: string;
-        role?: RoleListModel;
+        role_id?: number;
+        role?: Role;
         createdBy?: string;
-        approvedBy?: string;
         status?: string;//pending,approved,active, inactive, disabled
-        }
+}

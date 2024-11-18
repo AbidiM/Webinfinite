@@ -1,15 +1,15 @@
 // src/app/Couponlist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addCouponlist, addCouponlistFailure, addCouponlistSuccess, deleteCouponlist, deleteCouponlistFailure, deleteCouponlistSuccess, fetchCouponlistData, fetchCouponlistFail, fetchCouponlistSuccess, getCouponById, getCouponByIdFailure, getCouponByIdSuccess, updateCouponlist, updateCouponlistFailure, updateCouponlistSuccess } from './coupon.action';
-import { CouponListModel } from './coupon.model';
+import { Coupon } from './coupon.model';
 
 export interface CouponlistState {
-  CouponListdata: any[];
+  CouponListdata: Coupon[];
   currentPage: number;
   totalItems: number;
-  selectedCoupon: any;
+  selectedCoupon: Coupon;
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: CouponlistState = {
@@ -23,7 +23,7 @@ export const initialState: CouponlistState = {
 
 export const CouponListReducer = createReducer(
   initialState,
-  on(fetchCouponlistData, (state, { page, itemsPerPage }) => ({
+  on(fetchCouponlistData, (state, { page }) => ({
     ...state,
     currentPage: page,
     loading: true,

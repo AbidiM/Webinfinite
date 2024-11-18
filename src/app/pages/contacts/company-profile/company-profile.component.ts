@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { select, Store } from '@ngrx/store';
-import { addMerchantlist, getLoggedMerchantById, getMerchantById, updateMerchantlist } from 'src/app/store/merchantsList/merchantlist1.action';
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { selectDataLoading, selectedMerchant, selectMerchantById } from 'src/app/store/merchantsList/merchantlist1-selector';
+import { getMerchantById, updateMerchantlist } from 'src/app/store/merchantsList/merchantlist1.action';
+import { Observable, Subject } from 'rxjs';
+import { selectDataLoading, selectedMerchant } from 'src/app/store/merchantsList/merchantlist1-selector';
 import { fetchCountrylistData } from 'src/app/store/country/country.action';
 import { fetchArealistData } from 'src/app/store/area/area.action';
 import { fetchCitylistData } from 'src/app/store/City/city.action';
@@ -14,6 +15,12 @@ import { selectDataCountry } from 'src/app/store/country/country-selector';
 import { selectDataArea } from 'src/app/store/area/area-selector';
 import { selectDataSection } from 'src/app/store/section/section-selector';
 import { selectDataCity } from 'src/app/store/City/city-selector';
+import { Country } from 'src/app/store/country/country.model';
+import { Area } from 'src/app/store/area/area.model';
+import { City } from 'src/app/store/City/city.model';
+import { Merchant } from 'src/app/store/merchantsList/merchantlist1.model';
+import { UploadEvent } from 'src/app/shared/widget/image-upload/image-upload.component';
+import { FormUtilService } from 'src/app/core/services/form-util.service';
 @Component({
   selector: 'app-company-profile',
   templateUrl: './company-profile.component.html',
@@ -25,11 +32,11 @@ export class CompanyProfileComponent implements OnInit {
   formError: string | null = null;
   formSubmitted = false;
   private destroy$ = new Subject<void>();
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
 
-  submitted: any = false;
-  error: any = '';
-  successmsg: any = false;
+  submitted: boolean = false;
+  error: string = '';
+  successmsg: boolean = false;
   fieldTextType!: boolean;
   imageURL: string | undefined;
   existantmerchantLogo: string = null;
@@ -39,19 +46,22 @@ export class CompanyProfileComponent implements OnInit {
   isEditing: boolean = false;
   fromPendingContext: boolean = false;
 
-  countrylist: any[] = [];
-  countrylist$: Observable<any[]>  ;
-  arealist$:  Observable<any[]>  ;
-  currentMerchant :  any  ;
+  countrylist: Country[] = [];
+  countrylist$: Observable<Country[]>  ;
+  arealist$:  Observable<Area[]>  ;
+  currentMerchant :  Merchant  ;
 
-  citylist$:  Observable<any[]> ;
-  loading$: Observable<any>
+  citylist$:  Observable<City[]> ;
+  loading$: Observable<boolean>;
 
   sectionlist:  any[] = [];
   
-  filteredCountries: any[] = [];
-  filteredAreas :  any[] = [];
-  filteredCities:  any[] = [];
+  filteredCountries: Country[] = [];
+  filteredAreas :  Area[] = [];
+  filteredCities:  City[] = [];
+  serviceTypes: string[] = ['company', 'entreprise'];
+  originalMerchantData: Merchant = {}; 
+  @ViewChild('formElement', { static: false }) formElement: ElementRef;
 
   
  
@@ -59,24 +69,25 @@ export class CompanyProfileComponent implements OnInit {
     private formBuilder: UntypedFormBuilder, 
     private route: ActivatedRoute, 
     private router: Router,
+    private formUtilService: FormUtilService,
     public store: Store) {
 
       this.loading$ = this.store.pipe(select(selectDataLoading)); 
       const ID = this.getCurrentUserId();
 
-      this.store.dispatch(getLoggedMerchantById({merchantId: ID }));
-      this.store.dispatch(fetchCountrylistData({page: 1, itemsPerPage: 10, status: 'active' }));
-      this.store.dispatch(fetchArealistData({page: 1, itemsPerPage: 10, status: 'active' }));
-      this.store.dispatch(fetchCitylistData({page: 1, itemsPerPage: 10, status: 'active' }));
-      this.store.dispatch(fetchSectionlistData({page: 1, itemsPerPage: 10, status: 'active' }));
+      this.store.dispatch(getMerchantById({merchantId: ID }));
+      this.store.dispatch(fetchCountrylistData({page: 1, itemsPerPage: 100, status: 'active' }));
+      this.store.dispatch(fetchArealistData({page: 1, itemsPerPage: 1000, status: 'active' }));
+      this.store.dispatch(fetchCitylistData({page: 1, itemsPerPage: 10000, status: 'active' }));
+      this.store.dispatch(fetchSectionlistData({page: 1, itemsPerPage: 100, status: 'active' }));
      
       this.initForm();
       
      }
-     private getCurrentUserId(): any {
+     private getCurrentUserId(): number {
       // Replace with your actual logic to retrieve the user role
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      if(currentUser.role.name !== 'Admin'){
+      if(currentUser.role.translation_data[0].name !== 'Admin'){
          return currentUser.merchantId ;
       }
   }
@@ -105,19 +116,21 @@ export class CompanyProfileComponent implements OnInit {
     }
    private initForm() {
     this.merchantForm = this.formBuilder.group({
-    id: [''],
-    country_id:[''],
-    city_id:[''],
-    area_id:[''], 
-    serviceType: [''],
-    supervisorName: [''],
-    supervisorPhone: [''],
+    id: [null],
+    country_id:[null,Validators.required],
+    city_id:[null,Validators.required],
+    area_id:[null,Validators.required], 
+    serviceType: ['', Validators.required],
+    supervisorName: ['', Validators.required],
+    supervisorName_ar: ['', Validators.required],
+    supervisorPhone: ['', Validators.required],
     bankAccountNumber: [''],
-    registerCode:[''],
+    activationCode:[''],
     merchantName:['', Validators.required],
-    merchantPicture: [''],
-    merchantLogo: [''],
-    section_id:[''],
+    merchantName_ar:['', Validators.required],
+    merchantPicture: ['', Validators.required],
+    merchantLogo: ['', Validators.required],
+    section_id:['', Validators.required],
     website: [''],
     whatsup:[''],
     facebook: [''],
@@ -130,25 +143,67 @@ export class CompanyProfileComponent implements OnInit {
   year: number = new Date().getFullYear();
   fileName1: string = ''; 
   fileName2: string = ''; 
-  globalId : string = '';
+  globalId : number = null;
 
   ngOnInit() {
     
     this.countrylist$ = this.store.select(selectDataCountry);
 
-    this.countrylist$.subscribe((country) => 
-      { this.filteredCountries = country});   
+    this.countrylist$.subscribe((data) => 
+      { this.filteredCountries = [...data].map(country =>{
+        const translatedName = country.translation_data && country.translation_data[0]?.name || 'No name available';
+    
+        return {
+          ...country,  
+          translatedName 
+        };
+      }).sort((a, b) => {
+        // Sort by translatedName
+        return a.translatedName.localeCompare(b.translatedName);
+      });
+    });   
 
     this.arealist$ = this.store.select(selectDataArea);
-    this.arealist$.subscribe((areas) => { this.filteredAreas = areas});
+    this.arealist$.subscribe((data) => { 
+      this.filteredAreas =  [...data].map(area =>{
+        const translatedName = area.translation_data && area.translation_data[0]?.name || 'No name available';
+        return {
+          ...area,  
+          translatedName 
+        };
+      }).sort((a, b) => {
+        // Sort by translatedName
+        return a.translatedName.localeCompare(b.translatedName);
+      });
+    });
     
 
     this.citylist$ = this.store.select(selectDataCity);
-    this.citylist$.subscribe((cities) => { this.filteredCities = cities});
+    this.citylist$.subscribe((data) => { 
+      this.filteredCities = [...data].map(city =>{
+        const translatedName = city.translation_data && city.translation_data[0]?.name || 'No name available';
+        return {
+          ...city,  
+          translatedName 
+        };
+      }).sort((a, b) => {
+        // Sort by translatedName
+        return a.translatedName.localeCompare(b.translatedName);
+      });
+    });
   
     this.store.select(selectDataSection).subscribe((data) => {
-      this.sectionlist = [...data].sort((a, b) => {
-        return a.name.localeCompare(b.name);
+      this.sectionlist = [...data].map(section => {
+        // Extract the translated name (assuming translation_data[0] exists)
+        const translatedName = section.translation_data && section.translation_data[0]?.name || 'No name available';
+    
+        return {
+          ...section,  // Spread the original section data
+          translatedName // Add the translatedName property for easy binding
+        };
+      }).sort((a, b) => {
+        // Sort by translatedName
+        return a.translatedName.localeCompare(b.translatedName);
       });
     });
     this.store.select(selectedMerchant).subscribe(
@@ -165,10 +220,9 @@ export class CompanyProfileComponent implements OnInit {
           this.merchantForm.controls['city_id'].setValue(merchant.user.city_id);
           this.merchantForm.controls['section_id'].setValue(merchant.section_id);
 
-          this.merchantForm.patchValue(merchant);
           this.globalId = merchant.id;
-          this.merchantForm.patchValue(merchant.user);
-          
+          this.patchValueForm(merchant);
+          this.originalMerchantData = { ...merchant };
           this.isEditing = true;
 
         }this.currentMerchant = merchant
@@ -176,7 +230,18 @@ export class CompanyProfileComponent implements OnInit {
     });
     }
    
-  
+    patchValueForm(merchant: Merchant){
+      this.merchantForm.patchValue(merchant);
+      this.merchantForm.patchValue(merchant.user);
+      this.merchantForm.patchValue({
+        merchantName: merchant.translation_data[0].name,
+        merchantName_ar: merchant.translation_data[1].name,
+        supervisorName: merchant.translation_data[0].supervisorName,
+        supervisorName_ar: merchant.translation_data[1].supervisorName,
+        
+      });
+    
+    }
  
 
   onChangeCountrySelection(event: any){
@@ -215,6 +280,38 @@ export class CompanyProfileComponent implements OnInit {
   }
   // convenience getter for easy access to form fields
   get f() { return this.merchantForm.controls; }
+  createMerchantFromForm(formValue): Merchant {
+    const merchant = formValue;
+    merchant.translation_data = [
+      {
+        name: formValue.merchantName? formValue.merchantName: null, 
+        supervisorName: formValue.supervisorName? formValue.supervisorName: null,   
+        language: 'en',        
+      },
+      {
+        name: formValue.merchantName_ar? formValue.merchantName_ar: null ,  
+        supervisorName: formValue.supervisorName_ar? formValue.supervisorName_ar: null ,   
+        language:'ar',              
+      }
+    ];
+    merchant.translation_data = merchant.translation_data.map(translation => {
+          // Iterate over each property of the translation and delete empty values
+    Object.keys(translation).forEach(key => {
+            if (translation[key] === '' || translation[key] === null || translation[key] === undefined) {
+              delete translation[key];  // Remove empty fields
+            }
+          });
+          return translation; // Return the modified translation object
+        });
+          // Dynamically remove properties that are undefined or null at the top level of city object
+    Object.keys(merchant).forEach(key => {
+      if (merchant[key] === undefined || merchant[key] === null) {
+          delete merchant[key];  // Delete property if it's undefined or null
+       }
+    });
+        
+   return merchant;
+}
 
   /**
    * On submit form
@@ -227,7 +324,7 @@ export class CompanyProfileComponent implements OnInit {
       Object.keys(this.merchantForm.controls).forEach(control => {
         this.merchantForm.get(control).markAsTouched();
       });
-      this.focusOnFirstInvalid();
+      this.formUtilService.focusOnFirstInvalid(this.merchantForm);
       return;
     }
     this.formError = null;
@@ -238,88 +335,42 @@ export class CompanyProfileComponent implements OnInit {
       if(this.merchantPictureBase64){
         newData.merchantPicture = this.merchantPictureBase64;
       }
-      delete newData.area_id;
-      delete newData.country_id;
-     
-          newData.id = this.globalId;
-          this.store.dispatch(updateMerchantlist({ updatedData: newData }));
+          
+      newData.id = this.globalId;
+      const updatedDta = this.formUtilService.detectChanges(newData, this.originalMerchantData);
+      if (Object.keys(updatedDta).length > 0) {
+        const changedData = this.createMerchantFromForm(updatedDta);
+        console.log(changedData);
+        this.store.dispatch(updateMerchantlist({ updatedData: changedData }));
+      }
+      else{
+        this.formError = 'Nothing has been changed!!!';
+        this.formUtilService.scrollToTopOfForm(this.formElement);
+      }
         
       
     
   }
-  private focusOnFirstInvalid() {
-    const firstInvalidControl = this.getFirstInvalidControl();
-    if (firstInvalidControl) {
-      firstInvalidControl.focus();
-    }
-  }
-
-  private getFirstInvalidControl(): HTMLInputElement | null {
-    const controls = this.merchantForm.controls;
-    for (const key in controls) {
-      if (controls[key].invalid) {
-        const inputElement = document.getElementById(key) as HTMLInputElement;
-        if (inputElement) {
-          return inputElement;
-        }
-      }
-    }
-    return null;
-  }
-    
-  /**
-   * File Upload Image
-   */
- 
-  
-  async fileChange(event: any): Promise<string> {
-    let fileList: any = (event.target as HTMLInputElement);
-    let file: File = fileList.files[0];
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
-      reader.onerror = () => {
-        reject(reader.error);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-  
-  /**
-   * Upload Merchant Logo
-   */
-  async uploadMerchantLogo(event: any){
-    try {
-      const imageURL = await this.fileChange(event);
-      //this.merchantForm.controls['storeLogo'].setValue(imageURL);
-      this.storeLogoBase64 = imageURL;
-      this.fileName1 = ''; // Set the file name
-      this.existantmerchantLogo = imageURL;
-      this.merchantForm.controls['merchantLogo'].setValue(this.existantmerchantLogo);
-
-      
-    } catch (error: any) {
-      console.error('Error reading file:', error);
-    }
-  }
-  /**
-   * Upload Merchant Picture
-   */
-  async uploadMerchantPicture(event: any){
-    try {
-      const imageURL = await this.fileChange(event);
-      //this.merchantForm.controls['merchantPicture'].setValue(imageURL);
-      this.merchantPictureBase64 = imageURL;
+     
+  onImageUpload(event: UploadEvent): void {
+    if (event.type === 'image') {
+      // Handle Merchant Picture Upload
+      this.merchantPictureBase64 = event.file;
       this.fileName2 = ''; // Set the file name
-      this.existantmerchantPicture = imageURL;
-    } catch (error: any) {
-      console.error('Error reading file:', error);
+      this.existantmerchantPicture = event.file;
+      this.merchantForm.controls['merchantPicture'].setValue(this.existantmerchantPicture);
     }
-    
   }
   
+  onLogoUpload(event: UploadEvent): void {
+    if (event.type === 'logo') {
+      // Handle Logo Upload
+      this.storeLogoBase64 = event.file;
+      this.fileName1 = ''; // Set the file name
+      this.existantmerchantLogo = event.file;
+      this.merchantForm.controls['merchantLogo'].setValue(this.existantmerchantLogo);
+    }
+  }
   onCancel(){
 
     this.merchantForm.reset();

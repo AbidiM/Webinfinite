@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, mergeMap, map, tap } from 'rxjs/operators';
@@ -19,16 +20,12 @@ import {
     getMerchantById,
     getMerchantByIdSuccess,
     getMerchantByIdFailure,
-    getLoggedMerchantById,
-    getLoggedMerchantByIdFailure,
-    getLoggedMerchantByIdSuccess
+   
 } from './merchantlist1.action';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectMerchantById } from './merchantlist1-selector';
-import { CookieService } from 'ngx-cookie-service';
-import { HttpParams } from '@angular/common/http';
+
 
 @Injectable()
 export class MerchantslistEffects1 {
@@ -36,7 +33,7 @@ export class MerchantslistEffects1 {
         this.actions$.pipe(
             ofType(fetchMerchantlistData),
             mergeMap(({ page, itemsPerPage, status }) => 
-                  this.CrudService.fetchData('/merchants',this.setParams({ limit: itemsPerPage, page: page, status: status})).pipe(
+                  this.CrudService.fetchData('/merchants',{ limit: itemsPerPage, page: page, status: status}).pipe(
                     tap((response : any) => console.log('Fetched data:', response.result)), 
                     map((response) => {return fetchMerchantlistSuccess({ MerchantListdata: response.result })}),
                     catchError((error) =>{
@@ -61,51 +58,33 @@ export class MerchantslistEffects1 {
                         return addMerchantlistSuccess({newData});
                       }),
                       catchError((error) => {
-                        const errorMessage = this.getErrorMessage(error); 
+                        //const errorMessage = this.getErrorMessage(error); 
                         this.toastr.error(error.message);
                         return of(addMerchantlistFailure({ error: error.message })); // Dispatch failure action
-                      })                )
+                      }))
             )
         )
     );
     getLoggedMerchant$ =  createEffect(() =>
       this.actions$.pipe(
-        ofType(getLoggedMerchantById),
+        ofType(getMerchantById),
         mergeMap(({ merchantId }) => {
           // get merchant by id
           return this.CrudService.getDataById('/merchants', merchantId).pipe(
-            map(Merchant => {
-              if (Merchant) {
+            map((Merchant: any) => {
+              if (Merchant ) {
                 // Dispatch success action with the Merchant data
-                return getLoggedMerchantByIdSuccess({ merchant: Merchant.result });
+                return getMerchantByIdSuccess({ merchant: Merchant.result });
               } else {
                 //this.toastr.error('Merchant not found.'); // Show error notification
-                return getLoggedMerchantByIdFailure({ error: 'Merchant not found' });
+                return getMerchantByIdFailure({ error: 'Merchant not found' });
               }
             })
           );
         })
       )
     );
-    getMerchantById$ = createEffect(() =>
-        this.actions$.pipe(
-          ofType(getMerchantById),
-          mergeMap(({ merchantId }) => {
-            // Use the selector to get the Merchant from the store
-            return this.store.select(selectMerchantById(merchantId)).pipe(
-              map(Merchant => {
-                if (Merchant) {
-                  // Dispatch success action with the Merchant data
-                  return getMerchantByIdSuccess({ merchant: Merchant });
-                } else {
-                  this.toastr.error('Merchant not found.'); // Show error notification
-                  return getMerchantByIdFailure({ error: 'Merchant not found' });
-                }
-              })
-            );
-          })
-        )
-      );
+   
   
     updateData$ = createEffect(() => 
         this.actions$.pipe(
@@ -134,7 +113,7 @@ export class MerchantslistEffects1 {
             ofType(deleteMerchantlist),
             mergeMap(({ userId }) =>
                     this.CrudService.deleteData(`/merchants/${userId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                             this.toastr.success('Merchant deleted successfully.');
                             return deleteMerchantlistSuccess({ userId });
                           }),
@@ -151,13 +130,10 @@ export class MerchantslistEffects1 {
         private CrudService: CrudService,
         public toastr:ToastrService,
         private router: Router,
-        private cookieService: CookieService,
         private store: Store
     ) {
 
-      this.currentLge = this.cookieService.get('lang');
      }
-     currentLge: string = '';
 
     private getErrorMessage(error: any): string {
         // Implement logic to convert backend error to user-friendly message
@@ -169,23 +145,5 @@ export class MerchantslistEffects1 {
           return 'An unexpected error occurred. Please try again later.';
         }
       }
-      private setParams(payload: any): any{
-        let params = new HttpParams();
-
-        // Add language parameter if it's set
-        if (this.currentLge && this.currentLge == 'ar') {
-            params = params.set('lang', this.currentLge);
-        }
-
-        // Add any additional parameters from the payload
-        if (payload) {
-        for (const key in payload) {
-            if (payload.hasOwnProperty(key)) {
-            params = params.set(key, payload[key]);
-            }
-        }
-        }
-        console.log(params);
-        return params;
-      }
+     
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../../core/services/auth.service';
 
 import { select, Store } from '@ngrx/store';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,11 +19,11 @@ import { selectDataLoading } from 'src/app/store/Authentication/authentication-s
 export class LoginComponent implements OnInit {
 
   loginForm: UntypedFormGroup;
-  submitted: any = false;
-  loading$: Observable<any>;
+  submitted: boolean = false;
+  loading$: Observable<boolean>;
 
   userType: string ='';
-  error: any = '';
+  error: string = '';
   returnUrl: string;
   fieldTextType!: boolean;
 

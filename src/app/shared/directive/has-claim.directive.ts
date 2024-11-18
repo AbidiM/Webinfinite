@@ -1,4 +1,5 @@
-import { Directive, Input, SimpleChanges, TemplateRef, ViewContainerRef  } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Directive, Input, SimpleChanges, TemplateRef, ViewContainerRef, OnChanges, OnInit  } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { _User } from 'src/app/store/Authentication/auth.models';
 import { Claim } from 'src/app/store/Role/role.models';
@@ -6,9 +7,10 @@ import { Claim } from 'src/app/store/Role/role.models';
 
 
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[hasClaim]'
 })
-export class HasClaimDirective {
+export class HasClaimDirective implements OnChanges, OnInit {
 
   @Input('hasClaim') claim: Claim[]; // Ensure claim is of type Claim
 

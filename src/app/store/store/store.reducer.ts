@@ -1,14 +1,15 @@
 // src/app/Storelist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addStorelist, addStorelistFailure, addStorelistSuccess, deleteStorelist, deleteStorelistFailure, deleteStorelistSuccess, fetchStorelistData, fetchStorelistFail, fetchStorelistSuccess, getStoreById, getStoreByIdFailure, getStoreByIdSuccess, updateStorelist, updateStorelistFailure, updateStorelistSuccess } from './store.action';
+import { Branch } from './store.model';
 
 export interface StorelistState {
-  StoreListdata: any[];
+  StoreListdata: Branch[];
   currentPage: number;
   totalItems: number;
-  selectedStore: any,
+  selectedStore: Branch,
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: StorelistState = {
@@ -22,7 +23,7 @@ export const initialState: StorelistState = {
 
 export const StoreListReducer = createReducer(
   initialState,
-  on(fetchStorelistData,(state, { page, itemsPerPage }) => ({
+  on(fetchStorelistData,(state, { page }) => ({
     ...state,
     currentPage: page,
     loading: true,

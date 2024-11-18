@@ -1,36 +1,43 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker/bs-datepicker.config';
 import {  Observable,  Subject, takeUntil } from 'rxjs';
 
-import { BehaviorSubject } from 'rxjs';
 import { DatepickerConfigService } from 'src/app/core/services/date.service';
+import { FormUtilService } from 'src/app/core/services/form-util.service';
+import { UploadEvent } from 'src/app/shared/widget/image-upload/image-upload.component';
 import { _User } from 'src/app/store/Authentication/auth.models';
 
-import { selectCouponById, selectDataLoading } from 'src/app/store/coupon/coupon-selector';
+import { selectedCoupon, selectDataLoading } from 'src/app/store/coupon/coupon-selector';
 import { addCouponlist, getCouponById, updateCouponlist } from 'src/app/store/coupon/coupon.action';
+import { Coupon } from 'src/app/store/coupon/coupon.model';
 import { selectDataMerchant } from 'src/app/store/merchantsList/merchantlist1-selector';
 import { fetchMerchantlistData } from 'src/app/store/merchantsList/merchantlist1.action';
+import { Merchant } from 'src/app/store/merchantsList/merchantlist1.model';
 import { selectData } from 'src/app/store/store/store-selector';
 import { fetchStorelistData } from 'src/app/store/store/store.action';
+import { Branch } from 'src/app/store/store/store.model';
 
 @Component({
   selector: 'app-form-coupon',
   templateUrl: './form-coupon.component.html',
   styleUrl: './form-coupon.component.scss'
 })
-export class FormCouponComponent implements OnInit{
+export class FormCouponComponent implements OnInit, OnDestroy{
 
   @Input() type: string;
 
-  merchantList$: Observable<any[]>;
-  loading$: Observable<any>;
-  storeList$: Observable<any[]> | undefined ;
+  merchantList$: Observable<Merchant[]>;
+  loading$: Observable<boolean>;
+  storeList$: Observable<Branch[]> | undefined ;
 
   selectedStores: any[];
-  merchantList: any[]= [];
+  merchantList: Merchant[]= [];
+  storeList: Branch[]= [];
+
   existantcouponLogo: string = null;
   fileName: string = ''; 
 
@@ -52,6 +59,10 @@ export class FormCouponComponent implements OnInit{
   couponLogoBase64: string = null;
   isEditing = false;
   isLoading = false;
+  originalCouponData: Coupon = {};
+  @ViewChild('formElement', { static: false }) formElement: ElementRef;
+
+
 
 
   constructor(
@@ -59,18 +70,21 @@ export class FormCouponComponent implements OnInit{
     private formBuilder: UntypedFormBuilder, 
     private router: Router,
     private datepickerConfigService: DatepickerConfigService,
+    private formUtilService: FormUtilService,
     private route: ActivatedRoute){
       
       this.getNavigationState();
       this.loading$ = this.store.pipe(select(selectDataLoading)); 
 
-      this.currentRole = this.getCurrentUser()?.role.name;
+      this.currentRole = this.getCurrentUser()?.role.translation_data[0].name;
       this.merchantId =  this.getCurrentUser()?.merchantId;
 
       if(this.currentRole !== 'Admin')
-          this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 10 ,status:'', merchant_id: this.merchantId}));
-      
-      this.store.dispatch(fetchMerchantlistData({ page: 1, itemsPerPage: 10 , status: 'active'})); 
+          this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 1000 ,status:'', merchant_id: this.merchantId}));
+      else
+          this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 1000 ,status:'', merchant_id: null}));
+
+      this.store.dispatch(fetchMerchantlistData({ page: 1, itemsPerPage: 100 , status: 'active'})); 
       
       this.initForm();
       this.bsConfig = this.datepickerConfigService.getConfig();
@@ -96,21 +110,23 @@ export class FormCouponComponent implements OnInit{
 
   private initForm() {
     this.formCoupon = this.formBuilder.group({
-      id: [''],
+      id: [null],
       name: ['', Validators.required],
+      name_ar: ['', Validators.required],
       description: ['', Validators.required],
-      name_ar: [''],
-      termsAndConditions: [''],
-      termsAndConditions_ar: [''],
+      description_ar: ['', Validators.required],
+      termsAndConditions: ['', Validators.required],
+      termsAndConditions_ar: ['', Validators.required],
       codeCoupon: ['COUP123'],
-      quantity: ['', Validators.required],
-      nbr_of_use:['', Validators.required],
-      merchant_id: ['', Validators.required],
+      quantity: [null, Validators.required],
+      nbr_of_use:[null, Validators.required],
+      merchant_id: [null, Validators.required],
       stores: [[], Validators.required],
       managerName: [''],
+      managerName_ar: [''],
       managerPhone: [''],
-      startDateCoupon: ['', Validators.required],
-      endDateCoupon: ['', Validators.required],
+      startDateCoupon: [null, Validators.required],
+      endDateCoupon: [null, Validators.required],
       contractRepName: [''],
       sectionOrderAppearance: [''],
       categoryOrderAppearance: [''],
@@ -140,9 +156,36 @@ export class FormCouponComponent implements OnInit{
       };
     
     this.merchantList$ = this.store.pipe(select(selectDataMerchant)); // Observing the merchant list from store
-    this.merchantList$.subscribe(data => this.merchantList = data);
-    this.storeList$ = this.store.pipe(select(selectData));
-
+    
+    this.merchantList$.subscribe(data => {
+      this.merchantList = [...data].map(country =>{
+      const translatedName = country.translation_data && country.translation_data[0]?.name || 'No name available';
+      return {
+        ...country,  
+        translatedName 
+      };
+    }).sort((a, b) => {
+      // Sort by translatedName
+      return a.translatedName.localeCompare(b.translatedName);
+    });
+    });
+    this.store.pipe(select(selectData)).subscribe(data => {
+      if(data && data.length > 0){
+        this.storeList = [...data].map(store =>{
+        const translatedName = store.translation_data && store.translation_data[0]?.name || 'No name available';
+        return {
+          ...store,  
+          translatedName 
+        };
+      })
+      .sort((a, b) => {
+        // Sort by translatedName
+        return a.translatedName.localeCompare(b.translatedName);
+      })
+     }
+     console.log(this.storeList);
+     
+    });
     if(this.currentRole !== 'Admin'){
       this.formCoupon.get('merchant_id').setValue(this.merchantId);
       this.isLoading = true;
@@ -155,29 +198,53 @@ export class FormCouponComponent implements OnInit{
       this.store.dispatch(getCouponById({ couponId }));
       // Subscribe to the selected coupon from the store
       this.store
-        .pipe(select(selectCouponById(couponId)), takeUntil(this.destroy$))
+        .pipe(select(selectedCoupon), takeUntil(this.destroy$))
         .subscribe(coupon => {
           if (coupon) {
-            if(this.currentRole == 'Admin'){
-              this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 10, status:'', merchant_id: coupon.merchant_id}));
+            console.log(coupon);
+            coupon.stores = this.bindStore(coupon.stores)
+            if(this.currentRole === 'Admin'){
+              this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 1000, status:'', merchant_id: coupon.merchant_id}));
+              this.fetchStore(coupon.merchant_id);
             }
-           
-            this.storeList$ = this.store.pipe(select(selectData));
+           console.log(this.storeList);
             // Patch the form with coupon data
             this.existantcouponLogo = coupon.couponLogo;
             if(coupon.couponLogo){
               this.fileName = coupon.couponLogo.split('/').pop();
             }
-            coupon.startDateCoupon = this.formatDate(coupon.startDateCoupon);
-            coupon.endDateCoupon = this.formatDate(coupon.endDateCoupon);
-            this.formCoupon.patchValue(coupon);
-          
+            
+            this.patchValueForm(coupon);
+            this.originalCouponData = { ...coupon };
             this.isEditing = true;
 
           }
         });
     }
   
+}
+bindStore(stores: any[]){
+  stores = [...stores].map(store =>{
+    const translatedName = store.translation_data && store.translation_data[0]?.name || 'No name available';
+    return {
+      ...store,  
+      translatedName 
+    };
+});
+
+return stores;
+}
+patchValueForm(coupon: Coupon){
+  this.formCoupon.patchValue(coupon);
+  this.formCoupon.patchValue({
+    name: coupon.translation_data[0].name,
+    name_ar: coupon.translation_data[1].name,
+    description: coupon.translation_data[0].description,
+    description_ar: coupon.translation_data[1].description,
+    termsAndConditions: coupon.translation_data[0].termsAndConditions,
+    termsAndConditions_ar: coupon.translation_data[1].termsAndConditions,
+  });
+
 }
 private getNavigationState(){
   /**Determining the context of the routing if it is from Approved State or Pending State */
@@ -186,27 +253,108 @@ private getNavigationState(){
       this.fromPendingContext = navigation.extras.state.fromPending ;
     }
 }
-private formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toISOString().split('T')[0]; // Converts to YYYY-MM-DD format
-}
+
 getMerchantName(MerchantId: any){
-    return this.merchantList.find(merchant => merchant.id === MerchantId)?.merchantName ;
+    return this.merchantList.find(merchant => merchant.id === MerchantId)?.translation_data[0].name ;
   }
 getFileNameFromUrl(url: string): string {
   if (!url) return '';
   const parts = url.split('/');
   return parts[parts.length - 1]; // Returns the last part, which is the filename
 }
+fetchStore(id: number){
+  this.store.pipe(select(selectData)).subscribe(data => {
+    if(data && data.length > 0){
+      this.storeList = [...data].map(store =>{
+      const translatedName = store.translation_data && store.translation_data[0]?.name || 'No name available';
+      return {
+        ...store,  
+        translatedName 
+      };
+    })
+    .filter(store => store.merchant_id === id)
+    .sort((a, b) => {
+      // Sort by translatedName
+      return a.translatedName.localeCompare(b.translatedName);
+    })
+   }
+  });
+}
 
-onChangeMerchantSelection(event: any){
-  const merchant = event.target.value;
+onChangeMerchantSelection(event: Merchant){
+  const merchant = event;
+  this.storeList = [];
+  this.formCoupon.get('stores').setValue(null);
   if(merchant){
     this.isLoading = true;
-    this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 10 ,status:'', merchant_id: merchant}));
-    this.storeList$ = this.store.pipe(select(selectData));
-  }
+    this.store.pipe(select(selectData)).subscribe(data => {
+    if(data && data.length > 0){
+      this.storeList = [...data].map(store =>{
+      const translatedName = store.translation_data && store.translation_data[0]?.name || 'No name available';
+      return {
+        ...store,  
+        translatedName 
+      };
+    })
+    .filter(store => store.merchant_id === merchant.id)
+    .sort((a, b) => {
+      // Sort by translatedName
+      return a.translatedName.localeCompare(b.translatedName);
+    })
+   }
+  });
    
+}
+}
+createCouponFromForm(formValue): Coupon{
+  const coupon = formValue;
+  coupon.translation_data= [];
+  const enFields = [
+    { field: 'name', name: 'name' },
+    { field: 'description', name: 'description' },
+    { field: 'termsAndConditions', name: 'termsAndConditions' },
+    { field: 'managerName', name: 'managerName' }
+
+  ];
+  const arFields = [
+    { field: 'name_ar', name: 'name' },
+    { field: 'description_ar', name: 'description' },
+    { field: 'termsAndConditions_ar', name: 'termsAndConditions' },
+    { field: 'managerName_ar', name: 'managerName' }
+
+
+  ];
+  
+  // Create the English translation if valid
+  const enTranslation = this.formUtilService.createTranslation(coupon,'en', enFields);
+  if (enTranslation) {
+    coupon.translation_data.push(enTranslation);
+  }
+
+  // Create the Arabic translation if valid
+  const arTranslation = this.formUtilService.createTranslation(coupon,'ar', arFields);
+  if (arTranslation) {
+    coupon.translation_data.push(arTranslation);
+  }
+  if(coupon.translation_data.length <= 0)
+    delete coupon.translation_data;
+
+  // Dynamically remove properties that are undefined or null at the top level of city object
+    Object.keys(coupon).forEach(key => {
+      if (coupon[key] === undefined || coupon[key] === null) {
+        delete coupon[key];  // Delete property if it's undefined or null
+      }
+    });
+    delete coupon.name;  
+    delete coupon.name_ar;    
+    delete coupon.description;
+    delete coupon.description_ar;
+    delete coupon.termsAndConditions;
+    delete coupon.termsAndConditions_ar;
+  console.log(coupon);
+  return coupon;
+
+  
 }
   onSubmit(){
 
@@ -217,86 +365,51 @@ onChangeMerchantSelection(event: any){
       Object.keys(this.formCoupon.controls).forEach(control => {
         this.formCoupon.get(control).markAsTouched();
       });
-      this.focusOnFirstInvalid();
+      this.formUtilService.focusOnFirstInvalid(this.formCoupon);
       return;
     }
-    this.formError = null;
-    
-        
-      const newData = this.formCoupon.value;
+      this.formError = null;
+      let newData = this.formCoupon.value;
       if(this.couponLogoBase64){
         newData.couponLogo = this.couponLogoBase64;
       }
-      
-       
       newData.stores = this.formCoupon.get('stores').value.map((store) =>(store.id ) );
 
       if(!this.isEditing)
       {
          delete newData.codeCoupon;
          delete newData.id;
+         newData = this.createCouponFromForm(newData);
          this.store.dispatch(addCouponlist({ newData }));
       }
-      else{
-        this.store.dispatch(updateCouponlist({ updatedData: newData }));
+      else
+      {
+        const updatedDta = this.formUtilService.detectChanges(this.formCoupon, this.originalCouponData);
+        if (Object.keys(updatedDta).length > 0) {
+          const changedData = this.createCouponFromForm(updatedDta);
+          changedData.id =  this.formCoupon.value.id;
+          console.log(changedData);
+          this.store.dispatch(updateCouponlist({ updatedData: changedData }));
+        }
+        else{
+          this.formError = 'Nothing has been changed!!!';
+          this.formUtilService.scrollToTopOfForm(this.formElement);
+        }
       }
       
    
     }
       
-    private focusOnFirstInvalid() {
-      const firstInvalidControl = this.getFirstInvalidControl();
-      if (firstInvalidControl) {
-        firstInvalidControl.focus();
-      }
-    }
-  
-    private getFirstInvalidControl(): HTMLInputElement | null {
-      const controls = this.formCoupon.controls;
-      for (const key in controls) {
-        if (controls[key].invalid) {
-          const inputElement = document.getElementById(key) as HTMLInputElement;
-          if (inputElement) {
-            return inputElement;
-          }
-        }
-      }
-      return null;
-    }
- /**
-   * File Upload Image
-   */
- 
-  
- async fileChange(event: any): Promise<string> {
-  let fileList: any = (event.target as HTMLInputElement);
-  let file: File = fileList.files[0];
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      resolve(reader.result as string);
-    };
-    reader.onerror = () => {
-      reject(reader.error);
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 /**
  * Upload Coupon Logo
  */
-async uploadCouponLogo(event: any){
-  try {
-    const imageURL = await this.fileChange(event);
-    //
-    this.existantcouponLogo = imageURL;
-    this.formCoupon.controls['couponLogo'].setValue(imageURL);
-  } catch (error: any) {
-    console.error('Error reading file:', error);
+ uploadCouponLogo(event: UploadEvent): void{
+  if (event.type === 'logo') {
+    this.existantcouponLogo = event.file;
+    this.formCoupon.controls['couponLogo'].setValue(this.existantcouponLogo);
   }
 }
-
 
 onPhoneNumberChanged(phoneNumber: string) {
   this.formCoupon.get('managerPhone').setValue(phoneNumber);

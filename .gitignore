@@ -48,4 +48,6 @@ Thumbs.db
 
 #.env
 .env
-/environments
+/src/environments
+.nx/cache
+.nx/workspace-data

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, mergeMap, map, tap } from 'rxjs/operators';
+import { catchError, mergeMap, map } from 'rxjs/operators';
 
 import { of } from 'rxjs';
 import { CrudService } from 'src/app/core/services/crud.service';
@@ -23,7 +24,6 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectAreaById } from './area-selector';
 
 @Injectable()
 export class AreaEffects {
@@ -32,8 +32,8 @@ export class AreaEffects {
             ofType(fetchArealistData),
             mergeMap(({ page, itemsPerPage }) =>
                 this.CrudService.fetchData('/areas',{ limit: itemsPerPage, page: page}).pipe(
-                    tap((response : any) => console.log('Fetched data:', response.result)), 
-                    map((response) => fetchArealistSuccess({ AreaListdata: response.result })),
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    map((response: any) => fetchArealistSuccess({ AreaListdata: response.result })),
                     catchError((error) =>{
                         this.toastr.error('An error occurred while fetching the Area list. Please try again later.'); 
                         console.error('Fetch error:', error); 
@@ -63,41 +63,42 @@ export class AreaEffects {
             )
         )
     );
-    getAreaById$ = createEffect(() =>
-        this.actions$.pipe(
-          ofType(getAreaById),
-          mergeMap(({ AreaId }) => {
-            // Use the selector to get the Area from the Area
-            return this.store.select(selectAreaById(AreaId)).pipe(
-              map(Area => {
-                if (Area) {
-                  // Dispatch success action with the Area data
-                  return getAreaByIdSuccess({ Area: Area });
-                } else {
-                 // this.toastr.error('Area not found.'); // Show error notification
-              return getAreaByIdFailure({ error: 'Area not found' });
-                }
-              })
-            );
-          })
-        )
-      );
+    getAreaById$ =  createEffect(() =>
+      this.actions$.pipe(
+        ofType(getAreaById),
+        mergeMap(({ AreaId }) => {
+          return this.CrudService.getDataById('/cities', AreaId).pipe(
+            map((Area: any) => {
+              if (Area ) {
+                return getAreaByIdSuccess({ Area: Area.result});
+              } else {
+                return getAreaByIdFailure({ error: 'Area not found' });
+              }
+            })
+          );
+        })
+      )
+    );
+    
     
     updateData$ = createEffect(() => 
         this.actions$.pipe(
             ofType(updateArealist),
             mergeMap(({ updatedData }) => {
-                this.toastr.success('The Area has been updated successfully.');
-                this.router.navigate(['/private/areas']);
+                
                 return this.CrudService.updateData(`/areas/${updatedData.id}`, updatedData).pipe(
-                    map((response : any) => updateArealistSuccess({ updatedData : response.result})),
+                    map((response : any) =>
+                    {
+                        this.toastr.success('The Area has been updated successfully.');
+                        this.router.navigate(['/private/areas']);
+                        return updateArealistSuccess({ updatedData : response.result})
+                    }),
                     catchError((error) =>{
-                        const errorMessage = this.getErrorMessage(error); 
-                        this.toastr.error(errorMessage);
-                        return of(updateArealistFailure({ error }));
-                      })                 );
-            })
-        )
+                        //const errorMessage = this.getErrorMessage(error); 
+                        this.toastr.error(error.message);
+                        return of(updateArealistFailure({ error:error.message  }));
+                      }));
+            }))
     );
 
 
@@ -107,15 +108,14 @@ export class AreaEffects {
             ofType(deleteArealist),
             mergeMap(({ AreaId }) =>
                     this.CrudService.deleteData(`/areas/${AreaId}`).pipe(
-                        map((response: string) => {
+                        map( ()=> {
                             // If response contains a success message or status, you might want to check it here
                             return deleteArealistSuccess({ AreaId });
                           }),
                           catchError((error) => {
                             this.toastr.error('Failed to delete the Area. Please try again.');
                             return  of(deleteArealistFailure({ error: error.message }))})                )
-            )
-        )
+            ))
     );
     
     

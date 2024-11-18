@@ -16,7 +16,7 @@
       [ArrayData]="originalArray"
       [totalItems]="(totalItems$ | async)"
       [checkedStatus] = "{status: 'active', label: 'Active'}"
-      [uncheckedStatus] = "{status: 'inactive', label: 'inactive'}"
+      [uncheckedStatus] = "{status: 'inactive', label: 'inActive'}"
       (pageChanged)="onPageChanged($event)"
       (onPageSizeChanged)="onPageSizeChanged($event)"
       (onChangeEvent)="onChangeEvent($event)"
@@ -28,7 +28,7 @@
   
   <div id="elmLoader" class="loader" *ngIf="loading$ | async">
     <div class="spinner-border text-primary avatar-sm" role="status">
-      <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">{{'Loading...' | translate}}</span>
     </div>
   </div>    
   

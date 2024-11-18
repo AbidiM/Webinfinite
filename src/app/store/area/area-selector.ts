@@ -12,10 +12,10 @@ export const selectDataTotalItems = createSelector(
   selectDataState,
   (state: ArealistState) => state?.totalItems || 0
 );
-export const selectAreaById = (AreaId: string) =>createSelector(
+export const selectedArea = createSelector(
   selectDataState,
-  (state: ArealistState) =>  state?.AreaListdata.find(Area => Area.id === +AreaId)
-  );
+  (state: ArealistState) =>  state?.selectedArea || null
+);
 export const selectDataLoading = createSelector(
   selectDataState,
   (state: ArealistState) => state?.loading || false

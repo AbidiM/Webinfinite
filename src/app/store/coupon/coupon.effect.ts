@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, mergeMap, map, tap, switchMap } from 'rxjs/operators';
+import { catchError, mergeMap, map } from 'rxjs/operators';
 
 import { of } from 'rxjs';
 import { CrudService } from 'src/app/core/services/crud.service';
@@ -22,7 +23,6 @@ import {
 } from './coupon.action';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { selectCouponById } from './coupon-selector';
 import { Store } from '@ngrx/store';
 
 @Injectable()
@@ -33,8 +33,7 @@ export class CouponslistEffects {
             ofType(fetchCouponlistData),
             mergeMap(({ page, itemsPerPage, status }) =>
                 this.CrudService.fetchData('/coupons',{ limit: itemsPerPage, page: page, status: status}).pipe(
-                    tap((response : any) => console.log('Fetched data:', response.result)), 
-                    map((response) => fetchCouponlistSuccess({ CouponListdata : response.result })),
+                    map((response: any) => fetchCouponlistSuccess({ CouponListdata : response.result })),
                     catchError((error) =>{
                       this.toastr.error('An error occurred while fetching the Coupon list. Please try again later.'); 
                       console.error('Fetch error:', error); 
@@ -83,8 +82,8 @@ export class CouponslistEffects {
                 return updateCouponlistSuccess({ updatedData }); // Make sure to return the action
               }),
               catchError((error) =>{
-                const errorMessage = this.getErrorMessage(error); 
-                this.toastr.error(errorMessage);
+                //const errorMessage = this.getErrorMessage(error); 
+                this.toastr.error(error.message);
                 return of(updateCouponlistFailure({ error }));
               }) 
             )
@@ -92,17 +91,17 @@ export class CouponslistEffects {
         )
       );
       
-
+   
    getCouponById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getCouponById),
       mergeMap(({ couponId }) => {
         // Use the selector to get the coupon from the store
-        return this.store.select(selectCouponById(couponId)).pipe(
-          map(coupon => {
+        return this.CrudService.getDataById('/coupons', couponId).pipe(
+          map((coupon: any) => {
             if (coupon) {
               // Dispatch success action with the coupon data
-              return getCouponByIdSuccess({ coupon });
+              return getCouponByIdSuccess({ coupon: coupon.result });
             } else {
              // this.toastr.error('Coupon not found.'); // Show error notification
               return getCouponByIdFailure({ error: 'Coupon not found' });
@@ -117,7 +116,7 @@ export class CouponslistEffects {
             ofType(deleteCouponlist),
             mergeMap(({ couponId }) =>
                     this.CrudService.deleteData(`/coupons/${couponId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                             this.toastr.success('Coupon deleted successfully.');
                             return deleteCouponlistSuccess({ couponId });
                           }),
@@ -150,6 +149,6 @@ export class CouponslistEffects {
     private getCurrentUserRole(): string {
       // Replace with your actual logic to retrieve the user role
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      return currentUser ? currentUser.role.name : '';
-  }
+      return currentUser ? currentUser.role.translation_data[0].name : '';
+    }
 }

@@ -1,14 +1,15 @@
 // src/app/Rolelist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addRolelist, addRolelistFailure, addRolelistSuccess, deleteRolelist, deleteRolelistFailure, deleteRolelistSuccess, fetchRolelistData, fetchRolelistFail, fetchRolelistSuccess, getRoleById, getRoleByIdFailure, getRoleByIdSuccess, updateRolelist, updateRolelistFailure, updateRolelistSuccess } from './role.actions';
+import { Role } from './role.models';
 
 export interface RolelistState {
-  RoleListdata: any[];
+  RoleListdata: Role[];
   currentPage: number;
   totalItems: number;
-  selectedRole: any;
+  selectedRole: Role;
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: RolelistState = {

@@ -1,14 +1,15 @@
 // src/app/Citylist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addCitylist, addCitylistFailure, addCitylistSuccess, deleteCitylist, deleteCitylistFailure, deleteCitylistSuccess, fetchCitylistData, fetchCitylistFail, fetchCitylistSuccess, getCityById, getCityByIdFailure, getCityByIdSuccess, updateCitylist, updateCitylistFailure, updateCitylistSuccess } from './city.action';
+import { City } from './city.model';
 
 export interface CitylistState {
-  CityListdata: any[];
+  CityListdata: City[];
   currentPage: number;
   totalItems: number;
-  selectedCity: any,
+  selectedCity: City,
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: CitylistState = {
@@ -22,8 +23,9 @@ export const initialState: CitylistState = {
 
 export const CityListReducer = createReducer(
   initialState,
-  on(fetchCitylistData, state => ({
+  on(fetchCitylistData, (state,{ page }) => ({
     ...state,
+    currentPage: page,
     loading: true,
     error: null
   })),

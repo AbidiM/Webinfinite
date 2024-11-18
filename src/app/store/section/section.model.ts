@@ -1,6 +1,6 @@
 export interface SectionListModel {
     
-     id?: string;
+     id?: number;
      name?: string;
      status? : string;
      updatedAt? :  string;

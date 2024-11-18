@@ -1,16 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component } from '@angular/core';
 
-import { revenueBarChart, statData } from './data';
 
 import { ChartType } from './profile.model';
 import { FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
-import { CustomValidators } from 'src/app/shared/validator/password-match';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { _User } from 'src/app/store/Authentication/auth.models';
 import { updateProfile, updateProfilePassword } from 'src/app/store/Authentication/authentication.actions';
 import { TranslateService } from '@ngx-translate/core';
-import { getUser, selectDataLoading } from 'src/app/store/Authentication/authentication-selector';
+import { selectDataLoading } from 'src/app/store/Authentication/authentication-selector';
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +22,7 @@ import { getUser, selectDataLoading } from 'src/app/store/Authentication/authent
  */
 export class ProfileComponent  {
   // bread crumb items
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
   loading$: Observable<any>
 
   profileForm: UntypedFormGroup;
@@ -170,7 +169,6 @@ private focusOnFirstInvalid() {
 
     this.formError = null;
 
-      const id = this.f['id'].value;
       const currentPassword = this.f['currentPassword'].value;
       const newPassword = this.f['newPassword'].value;
 

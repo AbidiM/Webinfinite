@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { _User, User } from 'src/app/store/Authentication/auth.models';
 import { environment } from 'src/environments/environment';
 //import { environment } from 'src/environments/environment';

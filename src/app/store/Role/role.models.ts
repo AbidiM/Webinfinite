@@ -1,3 +1,22 @@
+
+import { PaginateModel, Translation } from "src/app/core/interfaces/core.interface";
+
+export interface RoleListModel  extends PaginateModel
+{   
+    data?: Role[]; 
+}
+export class Role{
+  id?: number ;
+  translation_data?: Translation[];
+  claims ?: Claim[];
+  status ?: Status;
+}
+
+
+export class Claim{
+  claimType !: Modules;
+  claimValue : Permission[]= [];
+}
 export enum  Status {
   isActive = 0,
   isDeleted = 1,
@@ -10,19 +29,6 @@ export enum  Status {
   isRejected = 8,
   isPending = 9,
 }
-export class RoleListModel{
-  id?: string ;
-  name?: string ;
-  claims ?: Claim[];
-  status ?: Status;
-}
-
-
-export class Claim{
-  claimType !: Modules;
-  claimValue : Permission[]= [];
-}
-
 export  enum Modules
     {
 

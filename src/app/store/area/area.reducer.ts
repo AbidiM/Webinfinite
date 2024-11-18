@@ -1,14 +1,15 @@
 // src/app/Arealist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addArealist, addArealistFailure, addArealistSuccess, deleteArealist, deleteArealistFailure, deleteArealistSuccess, fetchArealistData, fetchArealistFail, fetchArealistSuccess, getAreaById, getAreaByIdFailure, getAreaByIdSuccess, updateArealist, updateArealistFailure, updateArealistSuccess } from './area.action';
+import { Area } from './area.model';
 
 export interface ArealistState {
-  AreaListdata: any[];
+  AreaListdata: Area[];
   currentPage: number;
   totalItems: number;
-  selectedArea: any,
+  selectedArea: Area,
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: ArealistState = {

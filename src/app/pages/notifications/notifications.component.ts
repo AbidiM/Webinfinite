@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
@@ -5,6 +6,7 @@ import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
 import { deleteNotificationlist, fetchNotificationlistData, updateNotificationlist } from 'src/app/store/notification/notification.action';
 import { selectDataLoading, selectDataNotification, selectDataTotalItems } from 'src/app/store/notification/notification-selector';
+import { Notification } from 'src/app/store/notification/notification.model';
 
 @Component({
   selector: 'app-notifications',
@@ -14,25 +16,25 @@ import { selectDataLoading, selectDataNotification, selectDataTotalItems } from 
 export class NotificationsComponent implements OnInit{
   
   // bread crumb items
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
   public Modules = Modules;
   public Permission = Permission;
 
-  notificationList$: Observable<any[]>;
+  notificationList$: Observable<Notification[]>;
   totalItems$: Observable<number>;
-  loading$: Observable<any>
+  loading$: Observable<boolean>
 
 
   isDropdownOpen : boolean = false;
-  filteredArray: any[] = [];
-  originalArray: any[] = [];
+  filteredArray: Notification[] = [];
+  originalArray: Notification[] = [];
 
   itemPerPage: number = 10;
   currentPage : number = 1;
 
   columns : any[]= [
-    { property: 'title', label: 'Title' },
-    { property: 'description', label: 'Description' },
+    { property: 'translation_data[0].title', label: 'Title' },
+    { property: 'translation_data[0].description', label: 'Description' },
     { property: 'status', label: 'Status' },
   ];
 

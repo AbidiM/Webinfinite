@@ -1,16 +1,16 @@
 // src/app/Notificationlist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addNotificationlist, addNotificationlistFailure, addNotificationlistSuccess, deleteNotificationlist, deleteNotificationlistFailure, deleteNotificationlistSuccess, fetchMyNotificationlistData, fetchMyNotificationlistFail, fetchMyNotificationlistSuccess, fetchNotificationlistData, fetchNotificationlistFail, fetchNotificationlistSuccess, getNotificationById, getNotificationByIdFailure, getNotificationByIdSuccess, updateNotificationlist, updateNotificationlistFailure, updateNotificationlistSuccess } from './notification.action';
-import { NotificationListModel } from './notification.model';
+import { Notification } from './notification.model';
 
 export interface NotificationlistState {
-  NotificationListdata: any[];
+  NotificationListdata: Notification[];
   currentPage: number;
   totalItems: number;
-  selectedNotification: any;
+  selectedNotification: Notification;
   unseen: number;
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: NotificationlistState = {
@@ -25,7 +25,7 @@ export const initialState: NotificationlistState = {
 
 export const NotificationListReducer = createReducer(
   initialState,
-  on(fetchNotificationlistData, (state, { page, itemsPerPage }) => ({
+  on(fetchNotificationlistData, (state, { page }) => ({
     ...state,
     currentPage: page,
     loading: true,

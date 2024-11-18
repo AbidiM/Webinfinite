@@ -16,11 +16,11 @@ export const selectApprovalData = createSelector(
   selectDataState,
   (state: CouponlistState) => state?.CouponListdata.filter(coupon => coupon.status === 'pending') || []
 );
-export const selectCouponById = (couponId: string) =>createSelector(
-  selectDataState,
-  (state: CouponlistState) =>  state?.CouponListdata.find(coupon => coupon.id === +couponId)
-  );
 
+export const selectedCoupon = createSelector(
+    selectDataState,
+    (state: CouponlistState) =>  state?.selectedCoupon || null
+);
 export const selectDataLoading = createSelector(
   selectDataState,
   (state: CouponlistState) => state?.loading || false

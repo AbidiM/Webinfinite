@@ -1,7 +1,8 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, EMPTY, filter, map, switchMap } from 'rxjs';
+import { EMPTY, filter, map, switchMap } from 'rxjs';
 import { _User } from 'src/app/store/Authentication/auth.models';
 
 import { select, Store } from '@ngrx/store';
@@ -10,13 +11,16 @@ import { selectDataLoading, selectStoreById } from 'src/app/store/store/store-se
 import { addStorelist, getStoreById, updateStorelist } from 'src/app/store/store/store.action';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import { fetchMerchantlistData } from 'src/app/store/merchantsList/merchantlist1.action';
-import { fetchCountrylistData } from 'src/app/store/country/country.action';
 import { fetchArealistData } from 'src/app/store/area/area.action';
 import { fetchCitylistData } from 'src/app/store/City/city.action';
 import { selectDataMerchant } from 'src/app/store/merchantsList/merchantlist1-selector';
-import { selectDataCountry } from 'src/app/store/country/country-selector';
 import { selectDataArea } from 'src/app/store/area/area-selector';
 import { selectDataCity } from 'src/app/store/City/city-selector';
+import { Area } from 'src/app/store/area/area.model';
+import { City } from 'src/app/store/City/city.model';
+import { Merchant } from 'src/app/store/merchantsList/merchantlist1.model';
+import { FormUtilService } from 'src/app/core/services/form-util.service';
+import { Branch } from 'src/app/store/store/store.model';
 
 
 @Component({
@@ -24,7 +28,7 @@ import { selectDataCity } from 'src/app/store/City/city-selector';
   templateUrl: './form-store.component.html',
   styleUrl: './form-store.component.css'
 })
-export class FormStoreComponent implements OnInit {
+export class FormStoreComponent implements OnInit, OnDestroy {
   
   @Input() type: string;
   storeForm: UntypedFormGroup;
@@ -35,21 +39,20 @@ export class FormStoreComponent implements OnInit {
   
   public currentUser: Observable<_User>;
 
-  merchantlist$: Observable<any[]>;
-  countrylist$: Observable<any[]>;
-  arealist$: Observable<any[]>;
-  citylist$: Observable<any[]>;
-  loading$: Observable<any>
+  merchantlist$: Observable<Merchant[]>;
+  arealist$: Observable<Area[]>;
+  citylist$: Observable<City[]>;
+  loading$: Observable<boolean>;
 
-  merchantList: any[] = [];
+  merchantList: Merchant[] = [];
 
   merchantId: number =  null;
-  filteredAreas : any[];
-  filteredCities: any[];
+  filteredAreas : Area[];
+  filteredCities: City[];
   currentRole: string = '';
-  submitted: any = false;
-  error: any = '';
-  successmsg: any = false;
+  submitted: boolean = false;
+  error: string = '';
+  successmsg: boolean = false;
   fieldTextType!: boolean;
   fromPendingContext: boolean = false;
 
@@ -60,6 +63,9 @@ export class FormStoreComponent implements OnInit {
   storeLogoBase64: string = null;
   isEditing: boolean = false;
   uploadedFiles: any[] = [];
+  originalStoreData: Branch = {}; 
+  @ViewChild('formElement', { static: false }) formElement: ElementRef;
+
   // file upload
   public dropzoneConfig: DropzoneConfigInterface = {
     clickable: true,
@@ -71,39 +77,40 @@ export class FormStoreComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute, 
     private router: Router,
+    private formUtilService: FormUtilService,
     public store: Store) {
 
       this.getNavigationState();
       this.loading$ = this.store.pipe(select(selectDataLoading));
 
-      this.currentRole = this.getCurrentUser()?.role.name;
+      this.currentRole = this.getCurrentUser()?.role.translation_data[0].name;
       this.merchantId =  this.getCurrentUser()?.merchantId;
 
-      this.store.dispatch(fetchMerchantlistData({ page: 1, itemsPerPage: 10 , status: 'active'}));
-      this.store.dispatch(fetchCountrylistData({ page: 1, itemsPerPage: 10 , status: 'active'}));
-      this.store.dispatch(fetchArealistData({ page: 1, itemsPerPage: 10 , status: 'active'}));
-      this.store.dispatch(fetchCitylistData({ page: 1, itemsPerPage: 10 , status: 'active'}));
+      this.store.dispatch(fetchMerchantlistData({ page: 1, itemsPerPage: 100 , status: 'active'}));
+      this.store.dispatch(fetchArealistData({ page: 1, itemsPerPage: 1000 , status: 'active'}));
+      this.store.dispatch(fetchCitylistData({ page: 1, itemsPerPage: 10000 , status: 'active'}));
       
       this.initForm();
 
       
      }
-  // set the currenr year
-  year: number = new Date().getFullYear();
+ 
    
   private initForm() {
     this.storeForm = this.formBuilder.group({
       
-      id: [''],
+      id: [null],
       name: ['', Validators.required],
-      description: [''],
+      name_ar: ['', Validators.required],
+      description: ['', Validators.required],
+      description_ar: ['', Validators.required],
       phone: ['', Validators.required ],
-      merchant_id: ['', Validators.required],
-      city_id:['', Validators.required],
-      area_id:['',  Validators.required], 
+      url:[''],
+      merchant_id: [null, Validators.required],
+      city_id:[null, Validators.required],
+      area_id:[null,  Validators.required], 
       images:[null],
-
-        
+       
     });
   }
   private getCurrentUser(): _User {
@@ -113,11 +120,10 @@ export class FormStoreComponent implements OnInit {
 }
   ngOnInit() {
     
-      this.merchantlist$ = this.store.select(selectDataMerchant);
-      this.merchantlist$.subscribe((data) => { this.merchantList = data});
-      this.countrylist$ = this.store.select(selectDataCountry);
-      this.arealist$ = this.store.select(selectDataArea);
-      this.citylist$ = this.store.select(selectDataCity);
+      this.fetchMerchants();
+      this.fetchAreas();
+      this.fetchCities();
+     
    
     // Append the value of the Merchant to merchant_id
     if(this.currentRole !== 'Admin'){
@@ -154,35 +160,38 @@ export class FormStoreComponent implements OnInit {
       
       // Subscribe to the selected Store from the store
       this.store
-        .pipe(select(selectStoreById(StoreId)), takeUntil(this.destroy$))
+        .pipe(select(selectStoreById), takeUntil(this.destroy$))
         .subscribe(Store => {
           if (Store) {
             console.log('Retrieved Store:', Store);
             this.uploadedFiles = Store.images;
             console.log(this.uploadedFiles);
             const areaId = Store.city.area_id;
-            this.arealist$.subscribe(
-              areas=> 
-                this.filteredAreas = areas.filter(a =>a.country_id == Store.city.area.country.id )
-            );
-            if(this.filteredAreas){
-              this.citylist$.subscribe(
-                cities => 
-                  this.filteredCities = cities.filter(c =>c.area_id == areaId )
-              );
-           }
+         
             this.storeForm.get('area_id').setValue(areaId); 
             this.storeForm.get('city_id').setValue(Store.city_id); 
 
             console.log(this.uploadedFiles);
-            this.storeForm.patchValue(Store);
+            this.patchValueForm(Store);
+            this.originalStoreData = { ...Store };
+
             this.isEditing = true;
 
           }
         });
     }
    
-  
+}
+patchValueForm(store: Branch){
+  this.storeForm.patchValue(store);
+  this.storeForm.patchValue({
+    name: store.translation_data[0].name,
+    name_ar: store.translation_data[1].name,
+    description: store.translation_data[0].description,
+    description_ar: store.translation_data[1].description,
+    
+  });
+
 }
 private getNavigationState(){
   /**Determining the context of the routing if it is from Approved State or Pending State */
@@ -191,20 +200,7 @@ private getNavigationState(){
       this.fromPendingContext = navigation.extras.state.fromPending ;
     }
 }
-  getMerchantName(MerchantId: any){
-    const value = this.merchantList.find(merchant => merchant.id === MerchantId)?.merchantName ;
-    return value;
-  }
-  getAreaName(id: any){
-    return this.filteredAreas.find(area => area.id === id)?.name ;
-  }
-  getCityName(id: any){
-    return this.filteredCities.find(city => city.id === id)?.name ;
-  }
-  private formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // Converts to YYYY-MM-DD format
-  }
+   
   onPhoneNumberChanged(phoneNumber: string) {
     console.log('PHONE NUMBER', phoneNumber);
     this.storeForm.get('phone').setValue(phoneNumber);
@@ -213,45 +209,99 @@ private getNavigationState(){
   onSupervisorPhoneChanged(phoneNumber: string) {
     this.storeForm.get('supervisorPhone').setValue(phoneNumber);
   }
-  onChangeMerchantSelection(event: any){
-    const selectedMerchantId = event.target.value;
-    let selectMerchant =  null;
-    this.merchantlist$.subscribe(merchant=>
-      selectMerchant = merchant.find(m => m.id == selectedMerchantId)
-    );
+  fetchMerchants(){
+    this.store.select(selectDataMerchant).subscribe((data) => { 
+      this.merchantList =  [...data].map(merchant =>{
+        const translatedName = merchant.translation_data && merchant.translation_data[0]?.name || 'No name available';
+    
+        return {
+          ...merchant,  
+          translatedName 
+        };
+      }).sort((a, b) => {
+        // Sort by translatedName
+        return a.translatedName.localeCompare(b.translatedName);
+      });
+      console.log(this.merchantList);
+    });
+  }
+  fetchAreas(){
+    this.store.select(selectDataArea).subscribe(data =>
+      this.filteredAreas =  [...data].map(area =>{
+      const translatedName = area.translation_data && area.translation_data[0]?.name || 'No name available';
+      return {
+        ...area,  
+        translatedName 
+      };
+    })
+    .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+    }));
+  }
+  fetchCities(){
+    this.store.select(selectDataCity).subscribe((data) => {
+      this.filteredCities = [...data].map(city =>{
+       const translatedName = city.translation_data && city.translation_data[0]?.name || 'No name available';
+   
+       return {
+         ...city,  
+         translatedName 
+       };
+     })
+     .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+     });
+   });
+  }
+  onChangeMerchantSelection(event: Merchant){
+    const selectMerchant = event;
+    this.filteredAreas = [];
+    this.filteredCities = [];
+    this.storeForm.get('area_id').setValue(null);
+    this.storeForm.get('city_id').setValue(null);
     if(selectMerchant){
     
-      const merchant_country_id = selectMerchant.user.city.area.country.id;
-      //this.storeForm.get('country_id').setValue(merchant.city);
-      this.arealist$.subscribe(
-        areas=> 
-          this.filteredAreas = areas.filter(a =>a.country_id == merchant_country_id )
-      );
-    }
-    else{
-      this.filteredAreas = [];
+      const country_id = selectMerchant.user.city.area.country.id;
+      this.store.select(selectDataArea).subscribe(data =>
+        this.filteredAreas =  [...data].map(area =>{
+        const translatedName = area.translation_data && area.translation_data[0]?.name || 'No name available';
+        return {
+          ...area,  
+          translatedName 
+        };
+      })
+      .filter(area => area.country_id === country_id)
+      .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+      }));
     }
     
   }
-  onChangeAreaSelection(event: any){
-    const area = event.target.value;
+  onChangeAreaSelection(event: Area){
+    const area = event;
+    this.filteredCities = [];
+    this.storeForm.get('city_id').setValue(null);
     console.log(area);
     if(area){
-      this.citylist$.subscribe(
-        cities => 
-          this.filteredCities = cities.filter(c =>c.area_id == area )
-      );
+      this.store.select(selectDataCity).subscribe((data) => {
+        this.filteredCities = [...data].map(city =>{
+         const translatedName = city.translation_data && city.translation_data[0]?.name || 'No name available';
+     
+         return {
+           ...city,  
+           translatedName 
+         };
+       })
+       .filter(city => city.area_id === area.id)
+       .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+       });
+     });
     }
-    else{
-      this.filteredCities = [];
-    }
+    
     
   }
   // convenience getter for easy access to form fields
   get f() { return this.storeForm.controls; }
 
  parseImages(images: any[]){
-    let returnedImages: any[] = [];
+    const returnedImages: any[] = [];
 
       images.forEach((image) =>{
         if(image.dataURL){
@@ -264,7 +314,47 @@ private getNavigationState(){
       });
       return returnedImages;
   }
+  createStoreFromForm(formValue): Branch {
+    const branch = formValue;
+ 
+    branch.translation_data = [];
+    const enFields = [
+      { field: 'name', name: 'name' },
+      { field: 'description', name: 'description' },
+    ];
+    const arFields = [
+      { field: 'name_ar', name: 'name' },
+      { field: 'description_ar', name: 'description' },
+  
+    ];
+    // Create the English translation if valid
+     const enTranslation = this.formUtilService.createTranslation(branch,'en', enFields);
+     if (enTranslation) {
+      branch.translation_data.push(enTranslation);
+     }
 
+     // Create the Arabic translation if valid
+     const arTranslation = this.formUtilService.createTranslation(branch,'ar', arFields);
+     if (arTranslation) {
+      branch.translation_data.push(arTranslation);
+     }
+     if(branch.translation_data.length <= 0)
+       delete branch.translation_data;
+          // Dynamically remove properties that are undefined or null at the top level of city object
+    
+      Object.keys(branch).forEach(key => {
+      if (branch[key] === undefined || branch[key] === null) {
+          delete branch[key];  // Delete property if it's undefined or null
+       }
+    });
+    delete branch.name;
+    delete branch.name_ar;
+    delete branch.description;
+    delete branch.description_ar;
+    delete branch.area_id;
+
+   return branch;
+}
   /**
    * On submit form
    */
@@ -276,56 +366,46 @@ private getNavigationState(){
       Object.keys(this.storeForm.controls).forEach(control => {
         this.storeForm.get(control).markAsTouched();
       });
-      this.focusOnFirstInvalid();
+      this.formUtilService.focusOnFirstInvalid(this.storeForm);
       return;
     }
     this.formError = null;
           
-      const newData = this.storeForm.value;
+      let newData = this.storeForm.value;
       delete newData.area_id;
 
           if(!this.isEditing)
             {           
               if(this.uploadedFiles){
-                let images: any[] = [];
+                const images: any[] = [];
                 this.uploadedFiles.forEach(file => {
                   images.push(file.dataURL); // Push each Base64 string into the images array
               });
               newData.images =  images;
               }
               delete newData.id;
+              newData = this.createStoreFromForm(newData);
               //Dispatch Action
               this.store.dispatch(addStorelist({ newData }));
         }
         else
         {
+          const updatedDta = this.formUtilService.detectChanges(this.storeForm, this.originalStoreData);
+          if (Object.keys(updatedDta).length > 0) {
+            const changedData = this.createStoreFromForm(updatedDta);
+            changedData.images = this.parseImages(this.uploadedFiles);
+            changedData.id = this.storeForm.value.id;
+            this.store.dispatch(updateStorelist({ updatedData: changedData }));
+          }
+          else{
+            this.formError = 'Nothing has been changed!!!';
+            this.formUtilService.scrollToTopOfForm(this.formElement);
+          }
           
-          newData.images = this.parseImages(this.uploadedFiles);
-         // delete newData.images;
-          delete newData.area_id;
-          this.store.dispatch(updateStorelist({ updatedData: newData }));
         }
     
   }
-  private focusOnFirstInvalid() {
-    const firstInvalidControl = this.getFirstInvalidControl();
-    if (firstInvalidControl) {
-      firstInvalidControl.focus();
-    }
-  }
-
-  private getFirstInvalidControl(): HTMLInputElement | null {
-    const controls = this.storeForm.controls;
-    for (const key in controls) {
-      if (controls[key].invalid) {
-        const inputElement = document.getElementById(key) as HTMLInputElement;
-        if (inputElement) {
-          return inputElement;
-        }
-      }
-    }
-    return null;
-  }
+  
   
   /**
    * File Upload Image
@@ -333,8 +413,8 @@ private getNavigationState(){
  
   
   async fileChange(event: any): Promise<string> {
-    let fileList: any = (event.target as HTMLInputElement);
-    let file: File = fileList.files[0];
+    const fileList: any = (event.target as HTMLInputElement);
+    const file: File = fileList.files[0];
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {

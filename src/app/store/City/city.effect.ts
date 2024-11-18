@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, mergeMap, map, tap } from 'rxjs/operators';
+import { catchError, mergeMap, map } from 'rxjs/operators';
 
 import { of } from 'rxjs';
 import { CrudService } from 'src/app/core/services/crud.service';
@@ -23,7 +24,6 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectCityById } from './city-selector';
 
 @Injectable()
 export class CityEffects {
@@ -32,8 +32,7 @@ export class CityEffects {
             ofType(fetchCitylistData),
             mergeMap(({ page, itemsPerPage }) =>
                 this.CrudService.fetchData('/cities',{ limit: itemsPerPage, page: page}).pipe(
-                    tap((response : any) => console.log('Fetched data:', response.result)), 
-                    map((response) => fetchCitylistSuccess({ CityListdata: response.result })),
+                    map((response: any) => fetchCitylistSuccess({ CityListdata: response.result })),
                     catchError((error) =>{
                         this.toastr.error('An error occurred while fetching the City list. Please try again later.'); 
                         console.error('Fetch error:', error); 
@@ -63,25 +62,23 @@ export class CityEffects {
             )
         )
     );
-    getCityById$ = createEffect(() =>
-        this.actions$.pipe(
-          ofType(getCityById),
-          mergeMap(({ CityId }) => {
-            // Use the selector to get the City from the City
-            return this.store.select(selectCityById(CityId)).pipe(
-              map(City => {
-                if (City) {
-                  // Dispatch success action with the City data
-                  return getCityByIdSuccess({ City: City });
-                } else {
-                 // this.toastr.error('City not found.'); // Show error notification
-                  return getCityByIdFailure({ error: 'City not found' });
-                }
-              })
-            );
-          })
-        )
-      );
+    getCityById$ =  createEffect(() =>
+      this.actions$.pipe(
+        ofType(getCityById),
+        mergeMap(({ CityId }) => {
+          return this.CrudService.getDataById('/cities', CityId).pipe(
+            map((City: any) => {
+              if (City ) {
+                return getCityByIdSuccess({ City: City.result});
+              } else {
+                return getCityByIdFailure({ error: 'City not found' });
+              }
+            })
+          );
+        })
+      )
+    );
+   
   
 
     updateData$ = createEffect(() => 
@@ -112,7 +109,7 @@ export class CityEffects {
             ofType(deleteCitylist),
             mergeMap(({ CityId }) =>
                     this.CrudService.deleteData(`/cities/${CityId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                             // If response contains a success message or status, you might want to check it here
                             return deleteCitylistSuccess({ CityId });
                           }),

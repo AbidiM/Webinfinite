@@ -14,15 +14,16 @@
                               </div>
                           </div> 
                       </div>
-                 
                       <div class="col-md-6 mb-3">
                         <div class="form-group ">
-                            <label for="cronExpression" >{{'Scheduled_Date_and_Time' | translate}}</label>
-                            <div class="col-md-10">
-                                <input bsDatepicker class="form-control" formControlName="cronExpression" type="datetime-local" value="2024-08-19T13:45:00" id="cronExpression" [readonly]="type==='view'">
-                            </div>
-                        </div>
-                    </div>
+                           <label for="title_ar" >{{'Notif_title in arabic' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                            <input type="text" id="title_ar" class="form-control" formControlName="title_ar" [readonly]="type==='view'" >
+                            <div *ngIf="notifForm.get('title_ar').touched && notifForm.get('title_ar').invalid" class="invalid-feedback d-block">
+                                <span *ngIf="notifForm.get('title_ar').errors?.['required']">{{'notification title is required'| translate}}.</span>
+                              </div>
+                          </div> 
+                      </div>
+                      
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
                        <label for="description" >{{'Description' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
@@ -33,21 +34,37 @@
                           </div> -->
                       </div> 
                   </div>
-                 
-                                 
+                  <div class="col-md-6 mb-3">
+                    <div class="form-group ">
+                       <label for="description_ar" >{{'Description in arabic' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                       <textarea class="form-control" id="description_ar" formControlName="description_ar" rows="3" [readonly]="type==='view'"></textarea>
+                       <!-- <ckeditor [editor]="Editor" id="description" class="form-control"  data="Content of the Notification Message" (change)="onEditorChange($event)"></ckeditor> -->
+                       <!-- <div *ngIf="notificationForm.get('title').touched && notificationForm.get('title').invalid" class="invalid-feedback d-block">
+                            <span *ngIf="notificationForm.get('title').errors?.['required']">{{'title is required'| translate}}.</span>
+                          </div> -->
+                      </div> 
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="form-group ">
+                        <label for="cronExpression" >{{'Scheduled_Date_and_Time' | translate}}</label>
+                        <div class="col-md-10">
+                            <input bsDatepicker class="form-control" formControlName="cronExpression" type="datetime-local" value="2024-08-19T13:45:00" id="cronExpression" [readonly]="type==='view'">
+                        </div>
+                    </div>
+                </div>          
               </div>
                 <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end">
-                      <ng-container *ngIf="type =='view'; else editModeButtons">
+                      <ng-container *ngIf="type ==='view'; else editModeButtons">
                         <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                       </ng-container>
                       <ng-template #editModeButtons>
                         <button type="button" id="cancel-btn" class="btn btn-outline-secondary me-2" (click)="onCancel()">{{'Cancel'|translate}}</button>
-                        <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type == 'create' ? 'Add_notif' : 'update_notif') | translate }}
+                        <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type === 'create' ? 'Add_notif' : 'update_notif') | translate }}
                         </button>
                         <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                           <div class="spinner-border text-primary avatar-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">{{'Loading...'| translate}}</span>
                           </div>
                         </div>
                       </ng-template>        

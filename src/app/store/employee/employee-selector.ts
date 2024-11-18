@@ -13,11 +13,10 @@ export const selectDataTotalItems = createSelector(
   (state: EmployeelistState) => state?.totalItems || 0
 );
 
-export const selectEmployeeById = (EmployeeId: string) =>createSelector(
+export const selectedEmployee = createSelector(
   selectDataState,
-  (state: EmployeelistState) =>  state?.EmployeeListdata.find(Employee => Employee.id === +EmployeeId)
-  );
-
+  (state: EmployeelistState) =>  state?.selectedEmployee || null
+);
 export const selectDataLoading = createSelector(
   selectDataState,
   (state: EmployeelistState) => state?.loading || false

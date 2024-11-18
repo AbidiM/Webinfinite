@@ -3,39 +3,32 @@
         <div class="card">
             <div class="card-body ">
               <form  [formGroup]="areaForm"  class="m-4">
-                <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
+                <div *ngIf="formError" class="alert alert-danger">{{ formError | translate }}</div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-group ">
                            <label for="name" >{{'Area_Name' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                             <input type="text" id="name" class="form-control" formControlName="name" [readonly]="type==='view'"placeholder= "{{'Enter_the_Name_Of_the_area'| translate}}" >
                             <div *ngIf="areaForm.get('name').touched && areaForm.get('name').invalid" class="invalid-feedback d-block">
-                                <span *ngIf="areaForm.get('name').errors?.['required']">{{'Name is required'| translate}}.</span>
+                                <span *ngIf="areaForm.get('name').errors?.['required']">{{'Area Name is required'| translate}}.</span>
                             </div>
                           </div> 
                       </div>
-                      <!-- <div class="col-md-6 mb-3">
+                     <div class="col-md-6 mb-3">
                         <div class="form-group ">
-                           <label for="nameTrans" >{{'Area_Name_Trans' | translate}} </label>
-                            <input type="text" id="nameTrans" class="form-control" formControlName="nameTrans" placeholder= "{{'Enter_the_Name_Of_the_area'| translate}}" >
-                               
+                           <label for="name_ar" >{{'Area_Name_Trans' | translate}} </label>
+                            <input type="text" id="name_ar" class="form-control" formControlName="name_ar" placeholder= "{{'Enter_the_Name_Of_the_area'| translate}}" >
+                            <div *ngIf="areaForm.get('name_ar').touched && areaForm.get('name_ar').invalid" class="invalid-feedback d-block">
+                              <span *ngIf="areaForm.get('name_ar').errors?.['required']">{{'Arabic Area Name is required'| translate}}.</span>
+                          </div>
                           </div> 
-                      </div> -->
+                      </div> 
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
                           <label for="country_id" >{{'Country' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                          <input *ngIf="type === 'view'"
-                              type="text" 
-                              class="form-control" 
-                              [value]="getCountryName(areaForm.get('country_id').value)" 
-                              readonly 
-                            />
-                           <select [hidden]="type === 'view'" id="country_id"class="form-control"  formControlName="country_id" >
-                                <option value="" disabled selected>{{'Select_the_Country' | translate}}</option>
-                                <option *ngFor="let country of countries" [value]="country.id">
-                                 {{ country.name }}
-                               </option>
-                          </select>
+                          <ng-select [readonly]="type === 'view'" id="country_id" placeholder="{{'Select_the_Country' |translate}}" [items]="countries" bindLabel="translatedName" 
+                           bindValue="id"  formControlName="country_id" >
+                            </ng-select>
                           <div *ngIf="areaForm.get('country_id').touched && areaForm.get('country_id').invalid" class="invalid-feedback d-block">
                             <span *ngIf="areaForm.get('country_id').errors?.['required']">{{'Country_is_required'| translate}}.</span>
                         </div> 
@@ -44,16 +37,16 @@
               
                 <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end">
-                      <ng-container *ngIf="type =='view'; else editModeButtons">
+                      <ng-container *ngIf="type ==='view'; else editModeButtons">
                         <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                       </ng-container>
                     <ng-template #editModeButtons>
                         <button type="button" id="cancel-btn" class="btn btn-outline-secondary me-2" (click)="onCancel()">{{'Cancel'|translate}}</button>
-                        <button type="submit" class="btn btn-success" (click)="onSubmit()" > {{ (type == 'create' ? 'Add_area' : 'update_area') | translate }}
+                        <button type="submit" class="btn btn-success" (click)="onSubmit()" > {{ (type === 'create' ? 'Add_area' : 'update_area') | translate }}
                         </button>
                         <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                           <div class="spinner-border text-primary avatar-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">{{'Loading...' | translate}}</span>
                           </div>
                         </div>
                      </ng-template>    

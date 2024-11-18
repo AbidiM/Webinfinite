@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-edit-gift-card',
   templateUrl: './edit-gift-card.component.html',
   styleUrl: './edit-gift-card.component.css'
 })
-export class EditGiftCardComponent {
+export class EditGiftCardComponent implements OnInit {
  // bread crumb items
- breadCrumbItems: Array<{}>;
+ breadCrumbItems: Array<object>;
 
  ngOnInit() {
-   this.breadCrumbItems = [{ label: 'Gift-cards' }, { label: 'Edit Gift-Card', active: true }];
+   this.breadCrumbItems = [{ label: 'Gift Cards' }, { label: 'Edit gift card', active: true }];
 }
 }

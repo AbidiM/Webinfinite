@@ -18,27 +18,18 @@ import { UIModule } from '../shared/ui/ui.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { PagesRoutingModule } from './pages-routing.module';
 import { DashboardsModule } from './dashboards/dashboards.module';
-import { EcommerceModule } from './ecommerce/ecommerce.module';
-import { CryptoModule } from './crypto/crypto.module';
-import { EmailModule } from './email/email.module';
-import { InvoicesModule } from './invoices/invoices.module';
+
 import { ContactsModule } from './contacts/contacts.module';
 import { UtilityModule } from './utility/utility.module';
-import { UiModule } from './ui/ui.module';
-import { FormModule } from './form/form.module';
 
-import { ChartModule } from './chart/chart.module';
-import { CalendarComponent } from './calendar/calendar.component';
-import { MapsModule } from './maps/maps.module';
 import { HttpClientModule } from '@angular/common/http';
-import { ChatComponent } from './chat/chat.component';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../core/services/language.service';
 
 
 @NgModule({
-  declarations: [CalendarComponent, ChatComponent],
+  declarations: [],
   imports: [
     CommonModule,
     TranslateModule,
@@ -49,19 +40,11 @@ import { LanguageService } from '../core/services/language.service';
     NgApexchartsModule,
     ReactiveFormsModule,
     DashboardsModule,
-    CryptoModule,
-    EcommerceModule,
-    EmailModule,
-    InvoicesModule,
     HttpClientModule,
     UIModule,
     ContactsModule,
     UtilityModule,
-    UiModule,
-    FormModule,
-    ChartModule,
     WidgetModule,
-    MapsModule,
     FullCalendarModule,
     TabsModule.forRoot(),
     TooltipModule.forRoot(),

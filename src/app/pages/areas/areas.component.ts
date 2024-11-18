@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -8,6 +9,7 @@ import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { deleteArealist,  fetchArealistData,  updateArealist} from 'src/app/store/area/area.action';
 import { selectDataArea, selectDataLoading, selectDataTotalItems } from 'src/app/store/area/area-selector';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
+import { Area } from 'src/app/store/area/area.model';
 
 
 @Component({
@@ -17,24 +19,25 @@ import { Modules, Permission } from 'src/app/store/Role/role.models';
 })
 export class AreasComponent  implements OnInit {
  // bread crumb items
+ // eslint-disable-next-line @typescript-eslint/ban-types
  breadCrumbItems: Array<{}>;
  public Modules = Modules;
  public Permission = Permission;
 
- areasList$: Observable<any[]>;
+ areasList$: Observable<Area[]>;
  totalItems$: Observable<number>;
- loading$: Observable<any>
+ loading$: Observable<boolean>
 
  isDropdownOpen : boolean = false;
- filteredArray: any[] = [];
- originalArray: any[] = [];
+ filteredArray: Area[] = [];
+ originalArray: Area[] = [];
 
  itemPerPage: number = 10;
  currentPage : number = 1;
  
  columns : any[]= [
-   { property: 'name', label: 'Area' },
-   { property: 'country.name', label: 'Country' },
+   { property: 'translation_data[0].name', label: 'Area' },
+   { property: 'country.translation_data[0].name', label: 'Country' },
    { property: 'status', label: 'Status' },
  ];
  

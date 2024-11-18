@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+/* eslint-disable @angular-eslint/no-output-on-prefix */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild, OnInit, OnChanges } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -8,7 +10,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { _User } from 'src/app/store/Authentication/auth.models';
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { CookieService } from 'ngx-cookie-service';
   templateUrl: './custom-table.component.html',
   styleUrl: './custom-table.component.css'
 })
-export class CustomTableComponent  {
+export class CustomTableComponent implements OnInit, OnChanges  {
 
 
   @Input() pageTitle?: string;
@@ -93,7 +94,7 @@ export class CustomTableComponent  {
     this.currentUser = this.currentUserSubject.asObservable();
     this.currentUser.subscribe(user => {
       if (user) {
-      if(user.role.name !== 'Admin')
+      if(user.role.translation_data[0].name !== 'Admin')
       { this.isMerchant = true;}
     }});
    }
@@ -120,25 +121,38 @@ export class CustomTableComponent  {
   }
   
   getProperty(data: any, propertyPath: string): any {
+   
 
-    const value = propertyPath.split('.').reduce((acc, key) => acc && acc[key], data);
+    const keys = propertyPath.split('.');
+    let value = keys.reduce((acc, key) => 
+      {
+        if (key.includes('[') && key.includes(']')) {
+            const arrayKey = key.slice(0, key.indexOf('[')); 
+            const index = parseInt(key.slice(key.indexOf('[') + 1, key.indexOf(']'))); 
+            return acc && acc[arrayKey] ? acc[arrayKey][index] : undefined;
+        }
+        
+        return acc ? acc[key] : undefined;
+    }, data);
 
-      // Check if the value is 'pending' to set approveAction
-  this.approveAction = (value === 'pending');
+    this.approveAction = (value === 'pending');
 
-  // Check if the value is a valid date
-  if (value instanceof Date) {
-    return this.DatePipe.transform(value, 'short'); 
+    if (typeof value === 'string') {
+      // We will use a regex to verify if the string is in ISO 8601 format
+      const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+
+      // If the value matches the ISO 8601 format, parse it as a Date
+      if (iso8601Pattern.test(value)) {
+          value = new Date(value);  
+      }
   }
 
-  // Check if the value is a valid date string (but not a number)
-  // if (typeof value === 'string' && !isNaN(Date.parse(value))) {
-  //   return this.DatePipe.transform(value, 'short'); 
-  // }
-
+  if (value instanceof Date && !isNaN(value.getTime())) {
+      return this.DatePipe.transform(value, 'short');  
+  }
 
   return value;
-    
+   
   }
   onPageSizeChange(event: any){
     this.onPageSizeChanged.emit(event);
@@ -229,11 +243,9 @@ export class CustomTableComponent  {
       html2canvas(tableElement).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const imgWidth = 190; // Adjust width as needed
-        const pageHeight = pdf.internal.pageSize.height;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        const heightLeft = imgHeight;
         
-        let position = 0;
+        const position = 0;
         // Add the image to the PDF
         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
         pdf.save('download.pdf'); // Save the PDF

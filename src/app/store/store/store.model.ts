@@ -1,16 +1,23 @@
-export interface StoreListModel {
+import { PaginateModel, Translation } from "src/app/core/interfaces/core.interface";
+import { City } from "../City/city.model";
+import { Merchant } from "../merchantsList/merchantlist1.model";
+
+export interface StoreListModel  extends PaginateModel
+{   
+    data?: Branch[]; 
+}
+export interface Branch {
     
-     id?: string;
-     name ?: string  ;
-     description?:  string ;
+     id?: number;
+     translation_data?: Translation[];    
      phone?: string;
-     merchantId?: string;
-     merchant ?:   string;
-     cityId?: string;
-     city? :  string ;
-     images ?:  any[];  
-     offers ?:  any[];  
-     status? : Status;
+     url?: string;
+     merchant_id?: number;
+     merchant ?:   Merchant;
+     city_id?: number;
+     city? :  City ;
+     images?:  string[];  
+     status? : string;
      updatedAt? :  string;
      createdAt?: string;
 

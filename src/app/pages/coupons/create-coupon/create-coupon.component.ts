@@ -8,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 export class CreateCouponComponent implements OnInit {
 
   // bread crumb items
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
 
   ngOnInit() {
-    this.breadCrumbItems = [{ label: 'Coupons' }, { label: 'Add Coupon', active: true }];
+    this.breadCrumbItems = [{ label: 'Coupons' }, { label: 'Add coupon', active: true }];
   }
 }

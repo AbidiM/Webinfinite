@@ -1,4 +1,5 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
 import {  emailSentBarChart, monthlyEarningChart } from './data';
 import { ChartType } from './dashboard.model';
 import { BsModalService, BsModalRef, ModalDirective } from 'ngx-bootstrap/modal';
@@ -15,7 +16,7 @@ import { _User } from 'src/app/store/Authentication/auth.models';
   templateUrl: './default.component.html',
   styleUrls: ['./default.component.scss']
 })
-export class DefaultComponent implements OnInit {
+export class DefaultComponent implements OnInit, AfterViewInit {
   modalRef?: BsModalRef;
   isVisible: string;
   MostPaymentMethodChart : ChartType = MostPaymentMethodChart;
@@ -26,7 +27,7 @@ export class DefaultComponent implements OnInit {
   statData: any;
   rateStatics : any;
   rating: any;
-  currentRole: any
+  currentRole: string;
   config:any = {
     backdrop: true,
     ignoreBackdropClick: true
@@ -47,7 +48,7 @@ export class DefaultComponent implements OnInit {
       this.currentUser = this.currentUserSubject.asObservable();
       this.currentUser.subscribe(user => {
         if (user) {
-        this.currentRole = user.role.name;
+        this.currentRole = user.role.translation_data[0].name;
       }});
        
       this.dashboardService.getStatistics('week').subscribe(

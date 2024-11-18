@@ -1,22 +1,26 @@
-import { _User } from "../Authentication/auth.models";
-
-export interface GiftCardListModel {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { PaginateModel, Translation } from "src/app/core/interfaces/core.interface";
+import { Country } from "../country/country.model";
+import { Area } from "../area/area.model";
+import { City } from "../City/city.model";
+import { Merchant } from "../merchantsList/merchantlist1.model";
+export interface GiftCardListModel  extends PaginateModel
+{   
+    data?: GiftCard[]; 
+}
+export interface GiftCard {
     
-        id?: string;
-        name?: string;
-        transName?: string;
-        termsAndConditions?: string;
-        transTermsAndConditions?: string;
+        id?: number;
+        translation_data?: Translation[];    
         codeGiftCard?: string;
         qrCode?: string;
         urlStore?: string;
-        country?: any;// Country;
-        area?: any;// Area;
-        city?: any; // City;
+        country?: Country;
+        area?:  Area;
+        city?:  City;
         quantity?: number;
-        merchantId?: string;
-        merchant?: _User;
-        storeId?: string;
+        merchant_id?: number;
+        merchant?: Merchant;
         store?: any;//Store;
         managerName?: string;
         managerPhone?: string;
@@ -26,10 +30,10 @@ export interface GiftCardListModel {
         sectionOrderAppearnance?: string;
         categoryOrderAppearnce?: string;
         merchantLogo?: string;
-        GiftCardLogo?: string;
+        giftCardImage?: string;
         GiftCardType?: string;// free,discountPercent,discountAmount,servicePrice
         GiftCardValueBeforeDiscount?:number;
         GiftCardValueAfterDiscount?:number;
         PaymentDiscountRate?: number;
-        status?: any;//pending,approved,active, expired, closed
+        status?: string;//pending,approved,active, expired, closed
         }

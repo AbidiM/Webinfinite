@@ -5,10 +5,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.css'
 })
+
 export class ImageUploadComponent {
 
-  @Output() imageUploaded = new EventEmitter<any>();
-  @Output() logoUploaded = new EventEmitter<any>();
+  @Output() imageUploaded = new EventEmitter<UploadEvent>();
+  @Output() logoUploaded = new EventEmitter<UploadEvent>();
 
   @Input() disabled: boolean = false;
   @Input() existantImage: string = null;
@@ -27,12 +28,14 @@ export class ImageUploadComponent {
    /**
    * File upload handler to emit the base64 encoded image
    */
-   fileChange(event: any): void {
-    let fileList: any = event.target as HTMLInputElement;
-    let file: File = fileList.files[0];
-    if (file) {
-      this.convertToBase64(file);
-    }
+   fileChange(event: Event): void {
+     
+      const inputElement = event.target as HTMLInputElement;
+      if (inputElement && inputElement.files && inputElement.files[0]) {
+        const file: File = inputElement.files[0];  // Get the first file
+        this.convertToBase64(file);  
+      }
+    
   }
 
   /**
@@ -57,4 +60,8 @@ export class ImageUploadComponent {
     };
     reader.readAsDataURL(file);
   }
+}
+export interface UploadEvent {
+  file: string;
+  type: 'logo' | 'image';
 }

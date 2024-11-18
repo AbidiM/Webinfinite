@@ -3,35 +3,38 @@
         <div class="card">
             <div class="card-body ">
                 <form #formElement [formGroup]="countryForm"  >
-                    <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>                <div class="row">
+                    <div *ngIf="formError" class="alert alert-danger">{{ formError |translate }}</div>               
+                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-group ">
                            <label for="name" >{{'Country_Name' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                             <input type="text" id="name" class="form-control" formControlName="name" [readonly]="type==='view'" >
                             <div *ngIf="countryForm.get('name').touched && countryForm.get('name').invalid" class="invalid-feedback d-block">
-                                <span *ngIf="countryForm.get('name').errors?.['required']">{{'Name is required'| translate}}.</span>
+                                <span *ngIf="countryForm.get('name').errors?.['required']">{{'Country Name is required'| translate}}.</span>
                             </div>
                           </div> 
                       </div>
-                      <!-- <div class="col-md-6 mb-3">
+                      <div class="col-md-6 mb-3">
                         <div class="form-group ">
-                           <label for="nameTrans" >{{'Country_Name_Trans' | translate}} </label>
-                            <input type="text" id="nameTrans" class="form-control" formControlName="nameTrans"  >
-                               
+                           <label for="name_ar" >{{'Country_Name_Trans' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span> </label>
+                            <input type="text" id="name_ar" class="form-control" formControlName="name_ar" [readonly]="type==='view'" >
+                            <div *ngIf="countryForm.get('name_ar').touched && countryForm.get('name_ar').invalid" class="invalid-feedback d-block">
+                                <span *ngIf="countryForm.get('name_ar').errors?.['required']">{{'Arabic Country Name is required'| translate}}.</span>
+                            </div>
                           </div> 
-                      </div> -->
+                      </div>
                  <div class="col-md-6 mb-3">
                         <div class="form-group">
                           <label for="phoneCode" >{{'Phone_Code' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                           <input type="text" id="phoneCode" class="form-control" formControlName="phoneCode" [readonly]="type==='view'" >
                           <div *ngIf="countryForm.get('phoneCode').touched && countryForm.get('phoneCode').invalid" class="invalid-feedback d-block">
-                            <span *ngIf="countryForm.get('phoneCode').errors?.['required']">{{'Name is required'| translate}}.</span>
+                            <span *ngIf="countryForm.get('phoneCode').errors?.['required']">{{'Country code is required'| translate}}.</span>
                         </div>                        
                     </div>
                 </div>
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
-                       <label for="flag" >{{'Country_flag' | translate}} </label>
+                       <label for="flag" >{{'Country_flag' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span> </label>
                        <div class="text-center">
                         <div class="position-relative d-inline-block">
                             <div class="position-absolute bottom-0 end-0">
@@ -46,11 +49,14 @@
                             </div>
                             <div class="avatar-lg">
                                 <div class="avatar-title bg-light rounded-circle">
-                                    <img [src]="flag" id="projectlogo-img"  class="avatar-md h-auto rounded-circle" />
+                                    <img [src]="flag" alt="{{'Country_flag' |translate}} " id="projectlogo-img"  class="avatar-md h-auto rounded-circle" />
                                 </div>
                             </div>
                         </div>
                         </div>
+                        <div *ngIf="countryForm.get('flag').touched && countryForm.get('flag').invalid" class="invalid-feedback d-block">
+                            <span *ngIf="countryForm.get('flag').errors?.['required']">{{'Flag is required'| translate}}.</span>
+                        </div>   
                     </div>
                    
                   </div>
@@ -59,16 +65,16 @@
               </div>
                 <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end">
-                        <ng-container *ngIf="type =='view'; else editModeButtons">
+                        <ng-container *ngIf="type ==='view'; else editModeButtons">
                             <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                           </ng-container>
                         <ng-template #editModeButtons>
                             <button type="button" id="cancel-btn" class="btn btn-outline-secondary me-2" (click)="onCancel()">{{'Cancel'|translate}}</button>
-                            <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type == 'create' ? 'Add_country' : 'update_country') | translate }}
+                            <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type === 'create' ? 'Add_country' : 'update_country') | translate }}
                             </button>
                             <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                                 <div class="spinner-border text-primary avatar-sm" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                                <span class="visually-hidden">{{'Loading...' | translate}}</span>
                                 </div>
                             </div> 
                         </ng-template>   

@@ -1,4 +1,4 @@
-import {  RoleListModel } from "../Role/role.models";
+import {  Role } from "../Role/role.models";
 
 export class User {
   userId?: string;
@@ -39,6 +39,6 @@ building?: string;
 company_registration?: string;
 registrationDate?: string;
 updatedAt?: string;
-role?: RoleListModel;// the type will be Role
+role?: Role;// the type will be Role
 }
 

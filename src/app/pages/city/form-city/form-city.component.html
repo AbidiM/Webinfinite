@@ -1,16 +1,16 @@
 <div class="row">
     <div class="col-19">
         <div class="card">
-            <div class="card-body ">
+            <div #formElement class="card-body ">
               <form [formGroup]="cityForm"  class="m-4">
-                <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
+                <div *ngIf="formError" class="alert alert-danger">{{ formError | translate }}</div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-group ">
                            <label for="name" >{{'city_Name' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                             <input type="text" id="name" class="form-control" formControlName="name"[readonly]="type==='view'" placeholder= "{{'Enter_the_Name_Of_the_city'| translate}}" >
                             <div *ngIf="cityForm.get('name').touched && cityForm.get('name').invalid" class="invalid-feedback d-block">
-                                <span *ngIf="cityForm.get('name').errors?.['required']">{{'Name is required'| translate}}.</span>
+                                <span *ngIf="cityForm.get('name').errors?.['required']">{{'City Name is required'| translate}}.</span>
                             </div>
                           </div> 
                       </div>
@@ -19,25 +19,16 @@
                            <label for="name_ar" >{{'city_Name_Trans' | translate}} </label>
                             <input type="text" id="name_ar" class="form-control" formControlName="name_ar" [readonly]="type==='view'"placeholder= "{{'Enter_the_Name_Of_the_city_in_arabic'| translate}}" >
                             <div *ngIf="cityForm.get('name_ar').touched && cityForm.get('name_ar').invalid" class="invalid-feedback d-block">
-                              <span *ngIf="cityForm.get('name_ar').errors?.['required']">{{'Name is required'| translate}}.</span>
+                              <span *ngIf="cityForm.get('name_ar').errors?.['required']">{{'Arabic City Name is required'| translate}}.</span>
                           </div>
                           </div> 
                       </div>
                       <div class="col-md-6 mb-3">
                         <div class="form-group ">
-                              <label for="country_id" >{{'Country' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                              <input *ngIf="type === 'view'"
-                              type="text" 
-                              class="form-control" 
-                              [value]="getCountryName(cityForm.get('country_id').value)" 
-                              readonly 
-                            />
-                           <select [hidden]="type === 'view'" id="country_id"class="form-control"  formControlName="country_id" (change)="onChangeCountrySelection($event)">
-                                    <option value="" disabled selected>{{'Select_the_Country' | translate}}</option>
-                                    <option *ngFor="let country of countries" [value]="country.id">
-                                     {{ country.name }}
-                                   </option>
-                              </select>
+                          <label for="country_id" >{{'Country' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                          <ng-select [readonly]="type === 'view'" id="country_id" placeholder="{{'Select_the_Country' |translate}}" [items]="countries" formControlName="country_id" bindLabel="translatedName" 
+                           bindValue="id" (change)="onChangeCountrySelection($event)">
+                           </ng-select>
                               <div *ngIf="cityForm.get('country_id').touched && cityForm.get('country_id').invalid" class="invalid-feedback d-block">
                                 <span *ngIf="cityForm.get('country_id').errors?.['required']">{{'Country_is_required'| translate}}.</span>
                             </div> 
@@ -45,19 +36,10 @@
                       </div>
                       <div class="col-md-6 mb-3">
                         <div class="form-group ">
-                              <label for="area_id" >{{'Area' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                              <input *ngIf="type === 'view'"
-                              type="text" 
-                              class="form-control" 
-                              [value]="getAreaName(cityForm.get('area_id').value)" 
-                              readonly 
-                            />
-                           <select [hidden]="type === 'view'"  id="area_id"class="form-control"  formControlName="area_id"  >
-                                    <option value="" disabled selected>{{'Select_the_Area' | translate}}</option>
-                                    <option *ngFor="let area of filteredAreas" [value]="area.id">
-                                     {{ area.name }}
-                                   </option>
-                              </select>
+                           <label for="area_id" >{{'area' | translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                           <ng-select [readonly]="type === 'view'"  id="area_id" placeholder="{{'Select_the_Area' |translate}}" [items]="filteredAreas" bindLabel="translatedName" 
+                           bindValue="id" formControlName="area_id">
+                              </ng-select>
                               <div *ngIf="cityForm.get('area_id').touched && cityForm.get('area_id').invalid" class="invalid-feedback d-block">
                                 <span *ngIf="cityForm.get('area_id').errors?.['required']">{{'Area_is_required'| translate}}.</span>
                             </div> 
@@ -67,16 +49,16 @@
               
                 <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end">
-                      <ng-container *ngIf="type =='view'; else editModeButtons">
+                      <ng-container *ngIf="type ==='view'; else editModeButtons">
                         <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                       </ng-container>
                     <ng-template #editModeButtons>
                         <button type="button" id="cancel-btn" class="btn btn-outline-secondary me-2" (click)="onCancel()">{{'Cancel'|translate}}</button>
-                        <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type == 'create' ? 'Add_City' : 'update_city') | translate }}
+                        <button type="submit" class="btn btn-success" (click)="onSubmit()"> {{ (type === 'create' ? 'Add_City' : 'update_city') | translate }}
                         </button>
                         <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                             <div class="spinner-border text-primary avatar-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">{{'Loading...' | translate}}</span>
                             </div>
                         </div> 
                     </ng-template>   

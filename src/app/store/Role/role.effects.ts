@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, mergeMap, map, tap, switchMap } from 'rxjs/operators';
+import { catchError, mergeMap, map } from 'rxjs/operators';
 
 import { of } from 'rxjs';
 import { CrudService } from 'src/app/core/services/crud.service';
@@ -22,7 +23,6 @@ import {
 } from './role.actions';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { selectRoleById } from './role-selector';
 import { Store } from '@ngrx/store';
 
 @Injectable()
@@ -33,8 +33,7 @@ export class RolesEffects {
             ofType(fetchRolelistData),
             mergeMap(({ page, itemsPerPage, status }) =>
                 this.CrudService.fetchData('/roles/me',{ limit: itemsPerPage, page: page,status: status}).pipe(
-                    tap((response : any) => console.log('Fetched data:', response.result)), 
-                    map((response) => fetchRolelistSuccess({ RoleListdata : response.result })),
+                    map((response: any) => fetchRolelistSuccess({ RoleListdata : response.result })),
                     catchError((error) =>{
                       this.toastr.error('An error occurred while fetching the Role list. Please try again later.'); 
                       console.error('Fetch error:', error); 
@@ -52,8 +51,8 @@ export class RolesEffects {
                 this.CrudService.addData('/roles', newData).pipe(
                     map((newData) => {
                         
-                        this.router.navigate(['/private/roles']);
                         this.toastr.success('The new Role has been added successfully.');
+                        this.router.navigate(['/private/roles']);
                         // Dispatch the action to fetch the updated Role list after adding a new Role
                         return addRolelistSuccess({newData});
                       }),
@@ -71,8 +70,8 @@ export class RolesEffects {
           mergeMap(({ updatedData }) =>
             this.CrudService.updateData(`/roles/${updatedData.id}`, updatedData).pipe(
               map(() => {
-                this.router.navigate(['/private/roles']);
                 this.toastr.success('The Role has been updated successfully.');
+                this.router.navigate(['/private/roles']);
                 return updateRolelistSuccess({ updatedData }); // Make sure to return the action
               }),
               catchError((error) =>{
@@ -90,11 +89,11 @@ export class RolesEffects {
       ofType(getRoleById),
       mergeMap(({ RoleId }) => {
         // Use the selector to get the Role from the store
-        return this.store.select(selectRoleById(RoleId)).pipe(
-          map(Role => {
+        return this.CrudService.getDataById('/roles', RoleId).pipe(
+          map((Role: any) => {
             if (Role) {
               // Dispatch success action with the Role data
-              return getRoleByIdSuccess({ Role });
+              return getRoleByIdSuccess({ Role: Role.result });
             } else {
               //this.toastr.error('Role not found.'); // Show error notification
               return getRoleByIdFailure({ error: 'Role not found' });
@@ -110,7 +109,7 @@ export class RolesEffects {
             ofType(deleteRolelist),
             mergeMap(({ RoleId }) =>
                     this.CrudService.deleteData(`/roles/${RoleId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                             // If response contains a success message or status, you might want to check it here
                             this.toastr.success('The Role has been deleted successfully.');
                             return deleteRolelistSuccess({ RoleId });

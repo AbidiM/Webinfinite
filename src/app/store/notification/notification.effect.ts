@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, mergeMap, map, tap, switchMap } from 'rxjs/operators';
+import { catchError, mergeMap, map } from 'rxjs/operators';
 
 import { of } from 'rxjs';
 import { CrudService } from 'src/app/core/services/crud.service';
@@ -25,20 +26,17 @@ import {
 } from './notification.action';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { selectNotificationById } from './notification-selector';
 import { Store } from '@ngrx/store';
 
 @Injectable()
 export class NotificationsEffects {
-   // path : string = '/assets/data/Notification.json';
 
     fetchData$ = createEffect(() =>
         this.actions$.pipe(
             ofType(fetchNotificationlistData),
             mergeMap(({ page, itemsPerPage }) =>
                 this.CrudService.fetchData('/notifications/',{ limit: itemsPerPage, page: page}).pipe(
-                    tap((response : any) => console.log('Fetched data:', response.result)), 
-                    map((response) => fetchNotificationlistSuccess({ NotificationListdata : response.result })),
+                    map((response: any) => fetchNotificationlistSuccess({ NotificationListdata : response.result })),
                     catchError((error) =>{
                       this.toastr.error('An error occurred while fetching the Notification list. Please try again later.'); 
                       console.error('Fetch error:', error); 
@@ -52,9 +50,8 @@ export class NotificationsEffects {
       this.actions$.pipe(
           ofType(fetchMyNotificationlistData),
           mergeMap(() =>
-              this.CrudService.fetchData('/notifications/my-notifications ').pipe(
-                  tap((response : any) => console.log('Fetched data:', response.result)), 
-                  map((response) => fetchMyNotificationlistSuccess({ NotificationListdata : response.result })),
+              this.CrudService.fetchMyNotif('/notifications/my-notifications').pipe(
+                  map((response: any) => fetchMyNotificationlistSuccess({ NotificationListdata : response.result })),
                   catchError((error) =>{
                     this.toastr.error('An error occurred while fetching the My Notification list. Please try again later.'); 
                     console.error('Fetch error:', error); 
@@ -111,11 +108,11 @@ export class NotificationsEffects {
       ofType(getNotificationById),
       mergeMap(({ notificationId }) => {
         // Use the selector to get the Notification from the store
-        return this.store.select(selectNotificationById(notificationId)).pipe(
-          map(Notification => {
+        return this.CrudService.getDataById('/cities', notificationId).pipe(
+          map((Notification: any) => {
             if (Notification) {
               // Dispatch success action with the Notification data
-              return getNotificationByIdSuccess({ Notification });
+              return getNotificationByIdSuccess({ Notification: Notification.result });
             } else {
               //this.toastr.error('Notification not found.'); // Show error notification
               return getNotificationByIdFailure({ error: 'Notification not found' });
@@ -131,7 +128,7 @@ export class NotificationsEffects {
             ofType(deleteNotificationlist),
             mergeMap(({ notificationId }) =>
                     this.CrudService.deleteData(`/notifications/${notificationId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                             // If response contains a success message or status, you might want to check it here
                             
                             this.toastr.success('The Notification has been deleted successfully.');

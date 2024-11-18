@@ -1,14 +1,14 @@
 // src/app/Employeelist.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import {  addEmployeelist, addEmployeelistFailure, addEmployeelistSuccess, deleteEmployeelist, deleteEmployeelistFailure, deleteEmployeelistSuccess, fetchEmployeelistData, fetchEmployeelistFail, fetchEmployeelistSuccess, getEmployeeById, getEmployeeByIdFailure, getEmployeeByIdSuccess, updateEmployeelist, updateEmployeelistFailure, updateEmployeelistSuccess } from './employee.action';
-import { EmployeeListModel } from './employee.model';
+import { Employee } from './employee.model';
 
 export interface EmployeelistState {
-  EmployeeListdata: any[];
+  EmployeeListdata: Employee[];
   totalItems: number;
-  selectedEmployee: any;
+  selectedEmployee: Employee;
   loading: boolean;
-  error: any;
+  error: string;
 }
 
 export const initialState: EmployeelistState = {

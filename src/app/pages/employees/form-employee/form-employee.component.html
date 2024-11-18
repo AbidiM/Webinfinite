@@ -1,3 +1,8 @@
+<div id="elmLoader" class="loader" *ngIf="loading$ | async">
+  <div class="spinner-border text-primary avatar-sm" role="status">
+    <span class="visually-hidden">{{'Loading...' | translate}}</span>
+  </div>
+</div> 
 <accordion [closeOthers]="true" class="accordion" [isAnimated]="true">
     <accordion-group [isOpen]="isFirstOpen" heading="{{'Employee_Basic_Informations' | translate}}" class="accordion-item" #group>
       <span accordion-heading class="float-end fs-5">
@@ -8,12 +13,49 @@
             <div class="card">
                 <div class="card-body">
                     <form  [formGroup]="employeeForm"  class="m-4">
-                      <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
+                      <div *ngIf="formError" class="alert alert-danger">{{ formError | translate}}</div>
                       <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group ">
+                             <label for="f_name_ar" >{{'First_Name in arabic' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                              <input type="text" id="f_name_ar" [readonly]="type==='view'"class="form-control" formControlName="f_name_ar" placeholder="{{ 'Enter_first_name_in_arabic' | translate }}" required>
+                              <div *ngIf="employeeForm.get('f_name_ar').touched && employeeForm.get('f_name_ar').invalid" class="invalid-feedback d-block">
+                                  <span *ngIf="employeeForm.get('f_name_ar').errors?.['required']">{{'First Name in arabic is required'| translate}}.</span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group ">
+                             <label for="l_name_ar" >{{'Last_Name in arabic' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                              <input type="text" id="l_name_ar" [readonly]="type==='view'"class="form-control" formControlName="l_name_ar" placeholder="{{ 'Enter_last_name_in_arabic' | translate }}" required [readonly]="type==='view'">
+                              <div *ngIf="employeeForm.get('l_name_ar').touched && employeeForm.get('l_name_ar').invalid" class="invalid-feedback d-block">
+                                  <span *ngIf="employeeForm.get('l_name_ar').errors?.['required']">{{'Last Name in arabic is required'| translate}}.</span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group ">
+                             <label for="f_name" >{{'First_Name' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                              <input type="text" id="f_name" [readonly]="type==='view'"class="form-control" formControlName="f_name"  placeholder="{{ 'Enter_first_name' | translate }}" required>
+                              <div *ngIf="employeeForm.get('f_name').touched && employeeForm.get('f_name').invalid" class="invalid-feedback d-block">
+                                  <span *ngIf="employeeForm.get('f_name').errors?.['required']">{{'First Name is required'| translate}}.</span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group ">
+                             <label for="l_name" >{{'Last_Name' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                              <input type="text" id="l_name" [readonly]="type==='view'"class="form-control" formControlName="l_name" placeholder="{{ 'Enter_last_name' | translate }}" required>
+                              <div *ngIf="employeeForm.get('l_name').touched && employeeForm.get('l_name').invalid" class="invalid-feedback d-block">
+                                  <span *ngIf="employeeForm.get('l_name').errors?.['required']">{{'Last Name is required'| translate}}.</span>
+                                </div>
+                            </div> 
+                        </div>
+                        
                           <div class="col-md-6 mb-3">
                             <div class="form-group ">
                                <label for="username" >{{'Username' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                                <input type="text" id="username" [readonly]="type==='view'"class="form-control" formControlName="username" required>
+                                <input type="text" id="username" [readonly]="type==='view'"class="form-control" formControlName="username" placeholder="{{ 'Enter username' | translate }}" required [readonly]="type==='view'">
                                 <div *ngIf="employeeForm.get('username').touched && employeeForm.get('username').invalid" class="invalid-feedback d-block">
                                     <span *ngIf="employeeForm.get('username').errors?.['required']">{{'Username is required'| translate}}.</span>
                                   </div>
@@ -22,17 +64,17 @@
                           <div class="col-md-6 mb-3">
                             <div class="form-group ">
                               <label for="email">{{'Email'| translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                              <input type="email" id="email" class="form-control" [readonly]="type==='view'" formControlName="email" required>
+                              <input type="email" id="email" class="form-control" [readonly]="type==='view'" formControlName="email" placeholder="{{ 'Enter the email' | translate }}" required [readonly]="type!=='create'">
                               <div *ngIf="employeeForm.get('email').touched && employeeForm.get('email').invalid" class="invalid-feedback d-block">
                                 <span *ngIf="employeeForm.get('email').errors?.['required']">{{'Email is required'| translate}}.</span>
                               </div>
                             </div>
                           </div>
                      
-                          <div *ngIf="type == 'create'" class="col-md-6 mb-3">
+                          <div *ngIf="type === 'create'" class="col-md-6 mb-3">
                             <div class="form-group ">
                                 <label for="password" >{{'Password'| translate}} <span class="text-danger">*</span></label>
-                                <input type="password" id="password" class="form-control" formControlName="password" required>
+                                <input type="password" id="password" class="form-control" formControlName="password" placeholder="{{ 'Enter the Password' | translate }}" required>
                                 <!-- <button class="btn btn-light " type="button" id="password-addon2">
                                   <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
                                 </button> -->
@@ -41,27 +83,6 @@
                                 </div>
                                 </div>
                             </div>
-                            <!-- <div class="col-md-6 mb-3">
-                                <div class="form-group ">
-                                <label for="confpassword" >Confirm password <span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                                <input type="password" id="confpassword" class="form-control" formControlName="confpassword" required>
-                                 <button class="btn btn-light" type="button" id="password-addon2">
-                                  <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
-                                </button> -->
-                                <!-- <div *ngIf="employeeForm.get('confpassword').touched && employeeForm.get('confpassword').invalid" class="invalid-feedback d-block">
-                                  <span *ngIf="employeeForm.get('confpassword').errors?.['required']" else error>{{'Confirm password is required'| translate}}.
-                                    </span>
-                                    <ng-template #error>
-                                      <div class="invalid-feedback" *ngIf="passwordMatchError">
-                                          {{ 'confirm_password_does_not_matched' | translate }}
-                                      </div>
-                                  </ng-template>
-                                  
-                                </div>
-                              </div>
-                            </div> 
-                          </div>-->
-                         
                             <div class="col-md-6 mb-3">
                               <div class="form-group">
                                 <label for="phone" >{{'Phone Number'| translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label><br>
@@ -69,6 +90,7 @@
                                [disabled]="type==='view'"
                                [initialPhoneNumber]="employeeForm.get('phone').value"
                                 *ngIf="employeeForm" 
+                                [placeholder]="'Enter_employee_phone' | translate"
                                 (phoneNumberChanged)="onPhoneNumberChanged($event)" >
                               </app-phone-number>
                                <div *ngIf="employeeForm.get('phone').touched && employeeForm.get('phone').invalid" class="invalid-feedback d-block">
@@ -78,97 +100,51 @@
                             </div>
                             <div class="col-md-6 mb-3">
                               <div class="form-group">
-                                <label for="country_id" >Country</label>
-                                <input *ngIf="type === 'view'"
-                              type="text" 
-                              class="form-control" 
-                              [value]="getCountryName(employeeForm.get('country_id').value)" 
-                              readonly 
-                            />
-                           <select [hidden]="type === 'view'" id="country_id"class="form-control"  formControlName="country_id" (change)="onChangeCountrySelection($event)" >
-                                  <option value="" disabled selected>{{'Select_the_Country' | translate}}</option>
-                                  <option *ngFor="let country of countrylist" [value]="country.id">
-                                   {{ country.name }}
-                                 </option>
-                                </select>  
+                                <label for="country_id" >{{'Country' | translate}}</label>
+                                <ng-select [readonly]="type === 'view'" id="country_id" placeholder="{{'Select_the_Country' | translate}}" [items]="countrylist" bindLabel="translatedName" 
+                                bindValue="id"  formControlName="country_id" (change)="onChangeCountrySelection($event)" >
+                                </ng-select>  
                               </div>
                             </div>
                             
                               <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                  <label for="area_id">Area</label>
-                                  <input *ngIf="type === 'view'"
-                                  type="text" 
-                                  class="form-control" 
-                                  [value]="getAreaName(employeeForm.get('area_id').value)" 
-                                  readonly 
-                                />
-                               <select [hidden]="type === 'view'" id="area_id"class="form-control"  formControlName="area_id" (change)="onChangeAreaSelection($event)" >
-                                    <option value="" disabled selected>{{'Select_the_Area' | translate}}</option>
-                                    <option *ngFor="let area of filteredAreas" [value]="area.id">
-                                     {{ area.name }}
-                                   </option>
-                                  </select>                         
+                                  <label for="area_id">{{'area' | translate}}</label>
+                                  <ng-select [readonly]="type === 'view'" id="area_id" placeholder="{{'Select_the_Area' | translate}}" [items]="filteredAreas" bindLabel="translatedName" 
+                                  bindValue="id"  formControlName="area_id" (change)="onChangeAreaSelection($event)" >
+                                  </ng-select>                         
                                 </div>
                               </div>
           
                             <div class="col-md-6 mb-3">
                               <div class="form-group ">
-                                <label for="city_id" >City</label>
-                                <input *ngIf="type === 'view'"
-                                type="text" 
-                                class="form-control" 
-                                [value]="getCityName(employeeForm.get('city_id').value)" 
-                                readonly 
-                              />
-                             <select [hidden]="type === 'view'" id="city_id"class="form-control"  formControlName="city_id"  >
-                                  <option value="" disabled selected>{{'Select_the_City' | translate}}</option>
-                                  <option *ngFor="let city of filteredCities" [value]="city.id">
-                                   {{ city.name }}
-                                 </option>
-                                </select>                      
+                                <label for="city_id" >{{'City' | translate}}</label>
+                                <ng-select [readonly]="type === 'view'" id="city_id" placeholder="{{'Select_the_City' | translate}}" [items]="filteredCities" bindLabel="translatedName" 
+                             bindValue="id"  formControlName="city_id"  >
+                             </ng-select>                      
                               </div>
                             </div>
                         
                               <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                   <label for="bankAccountNumber">{{'Bank_Account_Number' | translate}}</label>
-                                  <input type="text" id="bankAccountNumber" class="form-control" formControlName="bankAccountNumber" [readonly]="type==='view'">
-                                  <!-- <div *ngIf="employeeForm.get('bankAccountNumber').touched && employeeForm.get('bankAccountNumber').invalid" class="invalid-feedback d-block">
-                                    <span *ngIf="employeeForm.get('bankAccountNumber').errors?.['required']">{{'Bank_Account_is_required'| translate}}.</span>
-                                  </div>  -->
-                                </div>
+                                  <input type="number" id="bankAccountNumber" class="form-control" placeholder="{{'Enter_the_Bank_AccountNumber' | translate}}" formControlName="bankAccountNumber" [readonly]="type==='view'">
+                                  </div>
                               </div>
                               <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                  <label for="bankName">{{'Bank_Name' | translate}}</label>
-                                  <input type="text" id="bankName" class="form-control" formControlName="bankName" [readonly]="type==='view'">
-
-                                  <!-- <select class="form-control" id="bankName" formControlName="bankName">
-                                    <option *ngFor="let bank of banks" [value]="bank.id">
-                                      {{ bank.name }}
-                                    </option>
-                               </select>         -->
-                                  <!-- <div *ngIf="employeeForm.get('bankName').touched && employeeForm.get('bankName').invalid" class="invalid-feedback d-block">
-                                    <span *ngIf="employeeForm.get('bankName').errors?.['required']">{{'Bank_Name_is_required'| translate}}.</span>
-                                  </div>  -->
+                                  <label for="bank_id">{{'Bank_Name' | translate}}</label>
+                                  <ng-select [readonly]="type === 'view'" id="bank_id" placeholder="{{'Select_the_Bank' | translate}}" [items]="banks" bindLabel="name" 
+                                  bindValue="id"  formControlName="bank_id"  >
+                                  </ng-select>
                                 </div>
                               </div>
                               <div class="col-md-6 mb-3">
                                 <div class="form-group ">
                                   <label for="role_id" >{{'Role'| translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                                  <input *ngIf="type === 'view'"
-                                  type="text" 
-                                  class="form-control" 
-                                  [value]="getRoleName(employeeForm.get('role_id').value)" 
-                                  readonly 
-                                />
-                               <select [hidden]="type === 'view'"class="form-control" id="role_id" formControlName="role_id">
-                                    <option value="" disabled selected>{{'Select_the_Role' | translate}}</option>
-                                    <option *ngFor="let role of rolelist" [value]="role.id">
-                                     {{ role.name }}
-                                   </option>
-                                  </select>                                  
+                                  <ng-select [readonly]="type === 'view'" placeholder="{{'Select_the_Role' | translate}}" [items]="rolelist" bindLabel="translatedName" 
+                                  bindValue="id" id="role_id" formControlName="role_id" (change)="onChangeRoleSelection($event)">
+                                  </ng-select>                                  
                                   <div *ngIf="employeeForm.get('role_id').touched && employeeForm.get('role_id').invalid" class="invalid-feedback d-block">
                                     <span *ngIf="employeeForm.get('role_id').errors?.['required']">{{'Role_is_required'| translate}}.</span>
                                   </div> 
@@ -180,15 +156,15 @@
                        </div>
                         <div class="col-12  mt-4">
                         <div class="d-flex justify-content-end ">
-                          <ng-container *ngIf="type =='view'; else editModeButtons">
+                          <ng-container *ngIf="type ==='view'; else editModeButtons">
                             <button type="button" class="btn btn-success" (click)="toggleViewMode()">{{ 'Go_Back' | translate }}</button>
                           </ng-container>
                         <ng-template #editModeButtons>
                         <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">{{'Cancel' | translate}}</button>
-                        <button type="submit" class="btn btn-primary" (click)="onSubmit()">{{ (type == 'create' ? 'Add_employee' : 'Update_employee') | translate }}</button>
+                        <button type="submit" class="btn btn-primary" (click)="onSubmit()">{{ (type === 'create' ? 'Add_employee' : 'Update_employee') | translate }}</button>
                         <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                           <div class="spinner-border text-primary avatar-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">{{'Loading...' | translate}}</span>
                           </div>
                         </div>    
                       </ng-template> 
@@ -201,7 +177,7 @@
         </div> <!-- end col -->
       </div>
     </accordion-group>
-    <accordion-group heading="{{'View_Employee_Permissions' | translate}}" class  ="accordion-item" #md>
+    <accordion-group  [isOpen]="isPermissionsOpen" heading="{{'View_Employee_Permissions' | translate}}" class  ="accordion-item" #md>
       <span accordion-heading class="float-end fs-5">
         <i class="mdi" [ngClass]="!md?.isOpen ? 'mdi mdi-chevron-down accor-plus-icon': 'mdi mdi-chevron-up accor-plus-icon'"></i>
       </span>
@@ -212,19 +188,18 @@
           <tr>
             <th>{{'Permissions'| translate}}</th>
             <!-- Loop over the Permission keys for the table header -->
-            <th *ngFor="let permission of permissionKeys">{{ permission }}</th>
+            <th *ngFor="let permission of permissionKeys">{{ permission | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <!-- Loop over the Modules for the rows -->
           <tr *ngFor="let module of moduleKeys">
-            <td>{{ module }}</td>
+            <td>{{ module | translate}}</td>
             <!-- Loop over the Permission keys for each module to create a checkbox -->
             <td *ngFor="let permission of permissionKeys">
               <input
                 type="checkbox"
-                [checked]="hasPermission(module, permission)"
-                (change)="togglePermission(module, permission, $event)"
+                [checked]="permissions[module]?.[permission]"
                 disabled
               />
             </td>

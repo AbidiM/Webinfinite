@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, OnInit, Output, EventEmitter, Inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from '../../core/services/auth.service';
@@ -7,17 +8,17 @@ import { CookieService } from 'ngx-cookie-service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { changesLayout } from 'src/app/store/layouts/layout.actions';
 import { getLayoutMode } from 'src/app/store/layouts/layout.selector';
 import { RootReducerState } from 'src/app/store';
-import { _User, User } from 'src/app/store/Authentication/auth.models';
-import { ToastrService } from 'ngx-toastr';
+import { _User } from 'src/app/store/Authentication/auth.models';
 import { logout } from 'src/app/store/Authentication/authentication.actions';
 import { SocketService } from 'src/app/core/services/webSocket.service';
 import { fetchMyNotificationlistData, updateNotificationlist } from 'src/app/store/notification/notification.action';
 import { selectDataNotification, selectDataUnseenCount } from 'src/app/store/notification/notification-selector';
 import { LoaderService } from 'src/app/core/services/loader.service';
+import { Notification } from 'src/app/store/notification/notification.model';
 
 @Component({
   selector: 'app-topbar',
@@ -28,7 +29,7 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 /**
  * Topbar component
  */
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   mode: any
   element: any;
   cookieValue: any;
@@ -40,14 +41,14 @@ export class TopbarComponent implements OnInit {
   dataLayout$: Observable<string>;
   private currentUserSubject: BehaviorSubject<_User>;
   public currentUser: Observable<_User>;
-  notifications: any[] = [];
+  notifications: Notification[] = [];
   nbrNotif: number = 0 ;
-  unseenNotif$: Observable<any>;
-  notifications$ : Observable<any>;
+  unseenNotif$: Observable<number>;
+  notifications$ : Observable<Notification[]>;
   notificationsSubscription: Subscription;
   notificationsSubject = new BehaviorSubject<any[]>([]);
-
-
+  height: number = 0;  // Dynamic height
+  maxHeight: number = 500;  // Maximum height for the container
 
   // Define layoutMode as a property
 
@@ -58,17 +59,25 @@ export class TopbarComponent implements OnInit {
     public _cookiesService: CookieService, 
     public store: Store<RootReducerState>,
     private socketService: SocketService,
-    private loaderService: LoaderService,
-    public toastr:ToastrService) {
+    private loaderService: LoaderService
+    ) {
       
       this.currentUserSubject = new BehaviorSubject<_User>(JSON.parse(localStorage.getItem('currentUser')));
       this.currentUser = this.currentUserSubject.asObservable();
       
       this.fetchNotification();
+      this.updateHeight();
       this.listenForMessages();
 
       
     
+      }
+  updateHeight() {
+        const baseHeight = 50;  // Assume each notification takes 50px height
+        const calculatedHeight = this.notifications.length * baseHeight;
+    
+        // Ensure height does not exceed maxHeight
+        this.height = Math.min(calculatedHeight, this.maxHeight);
       }
   private fetchNotification(){
     this.store.dispatch(fetchMyNotificationlistData());
@@ -79,6 +88,7 @@ export class TopbarComponent implements OnInit {
         if(data)  {
           this.notifications = data
         }
+          console.log(this.notifications);
               
     });
   }
@@ -110,7 +120,8 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit() {
     
-    
+    this.updateHeight();
+
     // this.initialAppState = initialState;
     this.store.select('layout').subscribe((data) => {
       this.theme = data.DATA_LAYOUT;

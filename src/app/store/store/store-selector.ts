@@ -12,9 +12,9 @@ export const selectDataTotalItems = createSelector(
   selectDataState,
   (state: StorelistState) => state?.totalItems || 0
 );
-export const selectStoreById = (StoreId: string) =>createSelector(
+export const selectStoreById = createSelector(
   selectDataState,
-  (state: StorelistState) =>  state?.StoreListdata.find(Store => Store.id === +StoreId)
+  (state: StorelistState) =>  state?.selectedStore || null
   );
 export const selectDataLoading = createSelector(
   selectDataState,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
   import { Component, OnInit } from '@angular/core';
   import { Observable } from 'rxjs';
@@ -7,6 +8,7 @@
 import { deleteCountrylist, fetchCountrylistData, updateCountrylist } from 'src/app/store/country/country.action';
 import { selectDataCountry, selectDataLoading, selectDataTotalItems } from 'src/app/store/country/country-selector';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
+import { Country } from 'src/app/store/country/country.model';
   
  
 @Component({
@@ -17,24 +19,25 @@ import { Modules, Permission } from 'src/app/store/Role/role.models';
 export class CountryComponent implements OnInit {
   
   // bread crumb items
+  // eslint-disable-next-line @typescript-eslint/ban-types
   breadCrumbItems: Array<{}>;
   public Modules = Modules;
   public Permission = Permission;
   
-  countriesList$: Observable<any[]>;
+  countriesList$: Observable<Country[]>;
   totalItems$: Observable<number>;
-  loading$: Observable<any>
+  loading$: Observable<boolean>
 
   isDropdownOpen : boolean = false;
-  filteredArray: any[] = [];
-  originalArray: any[] = [];
+  filteredArray: Country[] = [];
+  originalArray: Country[] = [];
 
   itemPerPage: number = 10;
   currentPage : number = 1;
   
   columns : any[]= [
     { property: 'flag', label: 'Flag' },
-    { property: 'name', label: 'Country' },
+    { property: 'translation_data[0].name', label: 'Country' },
     { property: 'phoneCode', label: 'Country_Code' },
     { property: 'status', label: 'Status' },
   ];

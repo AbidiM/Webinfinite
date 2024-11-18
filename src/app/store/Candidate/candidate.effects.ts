@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, mergeMap, map } from 'rxjs/operators';
@@ -14,7 +15,7 @@ export class CandidateEffects {
             ofType(fetchCandidatelistData),
             mergeMap(() =>
                 this.CrudService.fetchData('/app/candidate').pipe(
-                    map((candidateList) => fetchCandidatelistSuccess({ candidateList })),
+                    map((candidateList: any) => fetchCandidatelistSuccess({ candidateList })),
                     catchError((error) =>
                         of(fetchCandidatelistFail({ error }))
                     )

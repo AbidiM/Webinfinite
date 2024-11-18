@@ -23,6 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { WidgetModule } from 'src/app/shared/widget/widget.module';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 
@@ -30,6 +31,7 @@ import { WidgetModule } from 'src/app/shared/widget/widget.module';
   declarations: [LoginComponent, Login2Component, SignupComponent, PasswordresetComponent, Register2Component, Recoverpwd2Component, UpdatepasswordComponent],
   imports: [
     WidgetModule,
+    NgSelectModule,
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,

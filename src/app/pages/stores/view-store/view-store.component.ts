@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-view-store',
   templateUrl: './view-store.component.html',
   styleUrl: './view-store.component.css'
 })
-export class ViewStoreComponent {
-  breadCrumbItems: Array<{}>;
+export class ViewStoreComponent implements OnInit {
+  breadCrumbItems: Array<object>;
 
   ngOnInit() {
-    this.breadCrumbItems = [{ label: 'Stores' }, { label: 'View store', active: true }];
+    this.breadCrumbItems = [{ label: 'Stores' }, { label: 'View_store', active: true }];
   }
 }

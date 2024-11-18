@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, mergeMap, map, tap } from 'rxjs/operators';
@@ -66,10 +67,10 @@ export class SectionEffects {
           mergeMap(({ SectionId }) => {
             // Use the selector to get the Section from the Section
             return this.store.select(selectSectionById(SectionId)).pipe(
-              map(Section => {
+              map((Section: any) => {
                 if (Section) {
                   // Dispatch success action with the Section data
-                  return getSectionByIdSuccess({ Section: Section });
+                  return getSectionByIdSuccess({ Section: Section.result });
                 } else {
                   // Handle the case where the Section is not found, if needed
                   // For example, you might want to dispatch a failure action or return an empty Section
@@ -119,7 +120,7 @@ export class SectionEffects {
             ofType(deleteSectionlist),
             mergeMap(({ SectionId }) =>
                     this.CrudService.deleteData(`/sections/${SectionId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                             // If response contains a success message or status, you might want to check it here
                             return deleteSectionlistSuccess({ SectionId });
                           }),

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 
 import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
@@ -5,6 +7,7 @@ import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { Observable } from 'rxjs';
 import { selectDataLoading, selectDataMerchant, selectDataTotalItems } from 'src/app/store/merchantsList/merchantlist1-selector';
 import { deleteMerchantlist, fetchMerchantlistData, updateMerchantlist } from 'src/app/store/merchantsList/merchantlist1.action';
+import { Merchant } from 'src/app/store/merchantsList/merchantlist1.model';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
 
 /**
@@ -25,13 +28,13 @@ export class MerchantListComponent implements OnInit {
   public Permission = Permission;
 
 
-  MerchantList$: Observable<any[]>;
+  MerchantList$: Observable<Merchant[]>;
   totalItems$: Observable<number>;
-  loading$: Observable<any>
+  loading$: Observable<boolean>
 
   isDropdownOpen : boolean = false;
-  filteredArray: any[] = [];
-  originalArray: any[] = [];
+  filteredArray: Merchant[] = [];
+  originalArray: Merchant[] = [];
 
   itemPerPage: number = 10;
   currentPage : number = 1;
@@ -42,8 +45,8 @@ export class MerchantListComponent implements OnInit {
     { property: 'merchantLogo', label: 'Merchant Logo' },
     { property: 'qrCode', label: 'Qr Merchant' },
     { property: 'activationCode', label: 'Activation Code' },
-    { property: 'merchantName', label: 'Merchant_Name' },
-    { property: 'user.city.name', label: 'City' },
+    { property: 'translation_data[0].name', label: 'Merchant_Name' },
+    { property: 'user.city.translation_data[0].name', label: 'City' },
     { property: 'totalOffres', label: 'Total Offers' },
     { property: 'totalStores', label: 'Total Stores' },
     { property: 'user.status', label: 'Status' },

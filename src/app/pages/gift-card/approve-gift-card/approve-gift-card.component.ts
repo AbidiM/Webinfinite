@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -12,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
 import { fetchGiftCardlistData, updateGiftCardlist } from 'src/app/store/giftCard/giftCard.action';
 import { selectDataGiftCard, selectDataLoading, selectDataTotalItems } from 'src/app/store/giftCard/giftCard-selector';
+import { GiftCard } from 'src/app/store/giftCard/giftCard.model';
 
 @Component({
   selector: 'app-approve-gift-card',
@@ -20,24 +22,24 @@ import { selectDataGiftCard, selectDataLoading, selectDataTotalItems } from 'src
 })
 export class ApproveGiftCardComponent implements OnInit {
     // bread crumb items
-    breadCrumbItems: Array<{}>;
+    breadCrumbItems: Array<object>;
     public Modules = Modules;
     public Permission = Permission;
     
-    giftCardApprovalList$: Observable<any[]>;
+    giftCardApprovalList$: Observable<GiftCard[]>;
     totalItems$: Observable<number>;
-    loading$: Observable<any>
+    loading$: Observable<boolean>
 
     isDropdownOpen : boolean = false;
-    filteredArray: any[] = [];
-    originalArray: any[] = [];
+    filteredArray: GiftCard[] = [];
+    originalArray: GiftCard[] = [];
     
     itemPerPage: number = 10;
     currentPage : number = 1;
     
     columns : any[]= [
-      { property: 'name', label: 'Title' },
-      { property: 'merchant.merchantName', label: 'Merchant_Name' },
+      { property: 'translation_data[0].name', label: 'Title' },
+      { property: 'merchant.translation_data[0].nam', label: 'Merchant_Name' },
       { property: 'createdAt', label: 'Request_Date' },
       { property: 'status', label: 'Status' },
     

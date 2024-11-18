@@ -1,18 +1,13 @@
-
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-
-
 import { select, Store } from '@ngrx/store';
-
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-
-
 import { ToastrService } from 'ngx-toastr';
 import { Modules, Permission } from 'src/app/store/Role/role.models';
-import { selectApprovalData, selectData, selectDataLoading, selectDataTotalItems } from 'src/app/store/coupon/coupon-selector';
+import { selectApprovalData, selectDataLoading, selectDataTotalItems } from 'src/app/store/coupon/coupon-selector';
 import { fetchCouponlistData, updateCouponlist } from 'src/app/store/coupon/coupon.action';
+import { Coupon } from 'src/app/store/coupon/coupon.model';
 
 
 @Component({
@@ -22,24 +17,24 @@ import { fetchCouponlistData, updateCouponlist } from 'src/app/store/coupon/coup
 })
 export class CouponApprovalComponent implements OnInit {
 // bread crumb items
-breadCrumbItems: Array<{}>;
+breadCrumbItems: Array<object>;
 public Modules = Modules;
 public Permission = Permission;
 
-couponApprovalList$: Observable<any[]>;
+couponApprovalList$: Observable<Coupon[]>;
 totalItems$: Observable<number>;
-loading$: Observable<any>
+loading$: Observable<boolean>
 
 isDropdownOpen : boolean = false;
-filteredArray: any[] = [];
-originalArray: any[] = [];
+filteredArray: Coupon[] = [];
+originalArray: Coupon[] = [];
 
 itemPerPage: number = 10;
 currentPage : number = 1;
 
 columns : any[]= [
-  { property: 'name', label: 'Title' },
-  { property: 'merchant.merchantName', label: 'Merchant_Name' },
+  { property: 'translation_data[0].name', label: 'Title' },
+  { property: 'merchant.translation_data[0].name', label: 'Merchant_Name' },
   { property: 'createdAt', label: 'Request_Date' },
   { property: 'status', label: 'Status' },
 
@@ -48,13 +43,11 @@ columns : any[]= [
   constructor(public toastr:ToastrService,  public store: Store) {
     this.store.dispatch(fetchCouponlistData({ page: 1, itemsPerPage: 10, status:'pending' }));
     this.loading$ = this.store.pipe(select(selectDataLoading));
-
-      
+   
   }
 
   ngOnInit() {
-  
-     
+      
       setTimeout(() => {
         this.couponApprovalList$ = this.store.pipe(select(selectApprovalData));
         this.totalItems$ = this.store.pipe(select(selectDataTotalItems));
@@ -79,9 +72,6 @@ columns : any[]= [
     const newData = { id: event.id , status: event.status};
     this.store.dispatch(updateCouponlist({ updatedData: newData }));
   }
-
-
- 
 
 }
  

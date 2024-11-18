@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, mergeMap, map, tap, switchMap } from 'rxjs/operators';
+import { catchError, mergeMap, map } from 'rxjs/operators';
 
 import { of } from 'rxjs';
 import { CrudService } from 'src/app/core/services/crud.service';
@@ -17,13 +18,12 @@ import {
     deleteGiftCardlistSuccess,
     deleteGiftCardlist,
     getGiftCardById,
-    getGiftCardByIdSuccess
+    getGiftCardByIdSuccess,
+    getGiftCardByIdFailure
 } from './giftCard.action';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { selectGiftCardById } from './giftCard-selector';
 import { Store } from '@ngrx/store';
-import { getCouponByIdFailure } from '../coupon/coupon.action';
 
 @Injectable()
 export class GiftCardsEffects {
@@ -33,8 +33,7 @@ export class GiftCardsEffects {
             ofType(fetchGiftCardlistData),
             mergeMap(({ page, itemsPerPage, status }) =>
                 this.CrudService.fetchData('/gift-cards',{ limit: itemsPerPage, page: page, status: status}).pipe(
-                    tap((response : any) => console.log('Fetched data:', response.result)), 
-                    map((response) => fetchGiftCardlistSuccess({ GiftCardListdata : response.result })),
+                    map((response: any) => fetchGiftCardlistSuccess({ GiftCardListdata : response.result })),
                     catchError((error) =>{
                       this.toastr.error('An error occurred while fetching the Gift Cards list. Please try again later.'); 
                       console.error('Fetch error:', error); 
@@ -94,20 +93,20 @@ export class GiftCardsEffects {
         )
       );
       
-
+    
    getGiftCardById$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getGiftCardById),
       mergeMap(({ GiftCardId }) => {
         // Use the selector to get the GiftCard from the store
-        return this.store.select(selectGiftCardById(GiftCardId)).pipe(
+        return this.CrudService.getDataById('/gift-cards', GiftCardId).pipe(
           map(GiftCard => {
             if (GiftCard) {
               // Dispatch success action with the GiftCard data
               return getGiftCardByIdSuccess({ GiftCard });
             } else {
               //this.toastr.error('GiftCard not found.')
-              return getCouponByIdFailure({ error: 'GiftCard not found' }); // or handle it differently
+              return getGiftCardByIdFailure({ error: 'GiftCard not found' }); // or handle it differently
             }
           })
         );
@@ -120,13 +119,13 @@ export class GiftCardsEffects {
             ofType(deleteGiftCardlist),
             mergeMap(({ GiftCardId }) =>
                     this.CrudService.deleteData(`/gift-cards/${GiftCardId}`).pipe(
-                        map((response: string) => {
+                        map(() => {
                           this.toastr.success('GiftCard deleted successfully.');
                           return deleteGiftCardlistSuccess({ GiftCardId });
                           }),
                     catchError((error) => {
                       this.toastr.error('Failed to delete the GiftCard. Please try again.');
-                      return  of(deleteGiftCardlistFailure({ error }))})
+                      return  of(deleteGiftCardlistFailure({ error: error.message }))})
                 )
             )
         )
@@ -153,6 +152,6 @@ export class GiftCardsEffects {
     private getCurrentUserRole(): string {
       // Replace with your actual logic to retrieve the user role
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      return currentUser ? currentUser.role.name : '';
-  }
+      return currentUser ? currentUser.role.translation_data[0].name : '';
+    }
 }

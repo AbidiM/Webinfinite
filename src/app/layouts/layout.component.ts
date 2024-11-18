@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { EventService } from '../core/services/event.service';
 import { RootReducerState } from '../store';
@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./layout.component.scss']
 })
 
-export class LayoutComponent implements OnInit, AfterViewInit {
+export class LayoutComponent implements OnInit {
 
   // layout related config
   layoutType: string;
@@ -104,6 +104,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
           document.body.setAttribute("data-layout-scrollable", "true");
           document.body.setAttribute("data-layout-size", "fluid");
           document.body.classList.remove("right-bar-enabled", "vertical-collpsed");
+          break;
         default:
           document.body.setAttribute("data-layout-size", "fluid");
           break;
@@ -111,9 +112,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
     })
   }
-  ngAfterViewInit() {
-  }
-
+ 
   /**
    * Check if the vertical layout is requested
    */

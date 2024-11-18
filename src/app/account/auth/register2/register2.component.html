@@ -2,7 +2,7 @@
   <div class="container">
       <div class="row justify-content-center">
         <!-- <div class="col-md-8 col-lg-6 col-xl-5"> -->
-          <div class="card overflow-hidden">
+          <div #formElement class="card overflow-hidden">
               <div class="row logo-row" >
                        
                   <div class="col-12 my-5 text-center">
@@ -16,14 +16,23 @@
               </div>
                  
               <form  [formGroup]="signupForm"  class="m-4">
-                <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
+                <div *ngIf="formError" class="alert alert-danger">{{ formError | translate}}</div>
                  <div class="row"> 
                   <div class="col-md-6 mb-3">
                     <div class="form-group ">
-                    <label for="merchantName" >Merchant Name <span class="text-danger">*</span></label>
+                    <label for="merchantName" >{{'Merchant_Name'| translate}} <span class="text-danger">*</span></label>
                     <input type="text" id="merchantName" class="form-control" formControlName="merchantName" placeholder="{{ 'Enter merchant name' | translate }}" required>
                     <div *ngIf="signupForm.get('merchantName').touched && signupForm.get('merchantName').invalid" class="invalid-feedback d-block">
                       <span *ngIf="signupForm.get('merchantName').errors?.['required']">{{'Merchant Name is required'| translate}}.</span>
+                    </div>  
+                  </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="form-group ">
+                    <label for="merchantName_ar" >{{'Merchant Name in arabic' | translate}} <span  class="text-danger">*</span></label>
+                    <input type="text" id="merchantName_ar" class="form-control" formControlName="merchantName_ar" placeholder="{{ 'Enter merchant name in arabic' | translate }}" required  >
+                    <div *ngIf="signupForm.get('merchantName_ar').touched && signupForm.get('merchantName_ar').invalid" class="invalid-feedback d-block">
+                      <span *ngIf="signupForm.get('merchantName_ar').errors?.['required']">{{'Arabic Merchant Name is required'| translate}}.</span>
                     </div>  
                   </div>
                   </div>
@@ -39,8 +48,8 @@
                     </div>
                     <div class="col-md-6 mb-3">
                       <div class="form-group ">
-                        <label for="email">Email <span class="text-danger">*</span></label>
-                        <input type="email" id="email" class="form-control" formControlName="email" placeholder="{{ 'Enter email address' | translate }}" required>
+                        <label for="email">{{'Email' | translate}} <span class="text-danger">*</span></label>
+                        <input type="email" id="email" class="form-control" formControlName="email" placeholder="{{ 'Enter the email' | translate }}" required>
                         <div *ngIf="signupForm.get('email').touched && signupForm.get('email').invalid" class="invalid-feedback d-block">
                           <span *ngIf="signupForm.get('email').errors?.['required']">{{'Email is required'| translate}}.</span>
                         </div>
@@ -50,22 +59,22 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group ">
                           <label for="id_number" >{{'ID Number' | translate}} <span class="text-danger">*</span></label>
-                          <input type="text" id="id_number" class="form-control" formControlName="id_number" placeholder="{{ 'Enter ID number' | translate }}" required>
+                          <input type="number" id="id_number" class="form-control" formControlName="id_number" placeholder="{{ 'Enter your National ID number' | translate }}" required>
                           <div *ngIf="signupForm.get('id_number').touched && signupForm.get('id_number').invalid" class="invalid-feedback d-block">
                               <span *ngIf="signupForm.get('id_number').errors?.['required']">{{'id_number is required'| translate}}.</span>
                             </div>
                       </div>
                     </div>
-                    
-                    
+                                 
               
                       <div class="col-md-6 mb-3">
                           <div class="form-group ">
-                          <label for="password" >Password <span class="text-danger">*</span></label>
+                          <label for="password" >{{'Password' | translate}} <span class="text-danger">*</span></label>
                           <div class="input-group auth-pass-inputgroup">
-                          <input [type]="fieldTextType ? 'text' : 'password'" id="password" class="form-control" placeholder="{{ 'Enter password' | translate }}" formControlName="password" required>
+                          <input [type]="fieldTextType ? 'text' : 'password'" id="password" class="form-control" placeholder="{{ 'Enter the Password' | translate }}" formControlName="password" required>
                           <button class="btn btn-light ms-0" type="button" id="password-addon">
-                            <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
+                            <i tabindex="0" class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()" (keydown.enter)="toggleFieldTextType()" 
+                            (keydown.space)="toggleFieldTextType()"></i>
                           </button>
                           <div *ngIf="signupForm.get('password').touched && signupForm.get('password').invalid" class="invalid-feedback d-block">
                             <span *ngIf="signupForm.get('password').errors?.['required']">{{'Password is required'| translate}}.</span>
@@ -75,28 +84,29 @@
                       </div>
                       <div class="col-md-6 mb-3">
                           <div class="form-group ">
-                          <label for="confpassword" >Confirm password <span class="text-danger">*</span></label>
+                          <label for="confpassword" >{{'Confirm Password' | translate}} <span class="text-danger">*</span></label>
                           <div class="input-group auth-pass-inputgroup">
-                          <input [type]="fieldTextType ? 'text' : 'password'" id="confpassword" class="form-control" placeholder="{{ 'Re-enter password' | translate }}" formControlName="confpassword" required>
+                          <input [type]="confirmFieldTextType ? 'text' : 'password'" id="confpassword" class="form-control" placeholder="{{ 'Confirm Your New Password' | translate }}" formControlName="confpassword" required>
                           <button class="btn btn-light ms-0" type="button" id="password-addon">
-                            <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
+                            <i tabindex="0" class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !confirmFieldTextType, 'mdi-eye-outline': confirmFieldTextType}" (click)="toggleConfirmFieldTextType()" (keydown.enter)="toggleConfirmFieldTextType()" 
+                            (keydown.space)="toggleConfirmFieldTextType()"></i>
                           </button>
                           <div *ngIf="signupForm.get('confpassword').touched && signupForm.get('confpassword').invalid" class="invalid-feedback d-block">
-                            <span *ngIf="signupForm.get('confpassword').errors?.['required']">{{'Confirm password is required' | translate}}.</span>
+                            <span *ngIf="signupForm.get('confpassword').errors?.['required']">{{'Confirm password is required.' | translate}}</span>
                             <div *ngIf="passwordMatchError">{{ 'confirm_password_does_not_matched' | translate }}</div>
                           </div>
                           </div>
                         </div>
                       </div>
-                    
-                     
+                                         
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="phone" >Phone Number <span class="text-danger">*</span></label><br>
+                          <label for="phone" >{{'Phone Number' |  translate}} <span class="text-danger">*</span></label><br>
                          <app-phone-number
                          [initialPhoneNumber]="signupForm.get('phone').value"
                          *ngIf="signupForm"
                          [inputId]="'phone'"
+                         [placeholder]="'Enter merchant phone' | translate"
                           (phoneNumberChanged)="onPhoneNumberChanged($event)" >
                         </app-phone-number>
                          <div *ngIf="signupForm.get('phone').touched && signupForm.get('phone').invalid" class="invalid-feedback d-block">
@@ -104,78 +114,100 @@
                         </div>   
                         </div>
                       </div>
+                      
                       <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                          <label for="merchantLogo">{{ 'Merchant Logo' | translate }}</label>
+                      
+                          <app-image-upload [id]="'merchantLogo'" [type]="'logo'" [label]="'Upload Merchant Logo' | translate" [existantImage]="existantmerchantLogo" [filename]="fileName1" [alt]="'Merchant Logo'"  (logoUploaded)="onLogoUpload($event)"></app-image-upload>
+                       
+                         
+                        </div>
                       </div>
-                    <div class="col-md-6 mb-3">
-                      <div class="form-group ">
-                        <label for="merchantLogo" >Merchant Logo</label>
-                        <input type="file" id="merchantLogo" class="form-control" placeholder="{{ 'Choose a merchant Logo' | translate }}"formControlName="merchantLogo" accept="image/png, image/gif, image/jpeg" (change)="uploadStoreLogo($event)">
+                      <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                          <label for="merchantPicture">{{'Merchant Picture' | translate}}</label>
+                           
+                          <app-image-upload [id]="'merchantPicture'" [type]="'image'" [label]="'Upload Merchant Picture' | translate" [existantImage]="existantmerchantPicture" [filename]="fileName2" [alt]="'Merchant Pictutre'"  (imageUploaded)="onImageUpload($event)"></app-image-upload>
+  
+                         
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <div class="form-group">
-                        <label for="merchantPicture">Merchant Picture</label>
-                        <input type="file" id="merchantPicture" class="form-control" formControlName="merchantPicture" accept="image/png, image/gif, image/jpeg" (change)="uploadMerchantPicture($event)">
-                      </div>
-                    </div>
                   
-                    <div class="col-md-6 mb-3">
-                      <div class="form-group">
-                        <label for="country_id" >Country</label>
-                        <select  id="country_id"class="form-control"  formControlName="country_id" (change)="onChangeCountrySelection($event)" >
-                          <option value="" disabled selected>{{'Select_the_Country' | translate}}</option>
-                          <option *ngFor="let country of countrylist" [value]="country.id">
-                           {{ country.name }}
-                         </option>
-                        </select>  
-                      </div>
+                      <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                          <label for="country_id" >{{'Country' | translate}}<span   class="text-danger">*</span></label>
+                          <ng-select  id="country_id" placeholder="{{'Select_the_Country' | translate}}" [items]="countrylist" bindLabel="translatedName" 
+                          bindValue="id" formControlName="country_id" (change)="onChangeCountrySelection($event)" >
+                         </ng-select>  
+                          <div *ngIf="signupForm.get('country_id').touched && signupForm.get('country_id').invalid" class="invalid-feedback d-block">
+                            <span *ngIf="signupForm.get('country_id').errors?.['required']">{{'Country is required'| translate}}.</span>
+                          </div>   
+                        </div>
                       </div>
                     
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="area_id">Area</label>
-                          <select  id="area_id"class="form-control"  formControlName="area_id" (change)="onChangeAreaSelection($event)" >
-                            <option value="" disabled selected>{{'Select_the_Area' | translate}}</option>
-                            <option *ngFor="let area of filteredAreas" [value]="area.id">
-                             {{ area.name }}
-                           </option>
-                          </select>                         
+                          <label for="area_id">{{'area' | translate}}<span  class="text-danger">*</span></label>
+                          <ng-select   id="area_id" placeholder="{{'Select_the_Area' | translate}}" [items]="filteredAreas" bindLabel="translatedName" 
+                          bindValue="id" formControlName="area_id" (change)="onChangeAreaSelection($event)" >
+                          </ng-select> 
+                          <div *ngIf="signupForm.get('area_id').touched && signupForm.get('area_id').invalid" class="invalid-feedback d-block">
+                            <span *ngIf="signupForm.get('area_id').errors?.['required']">{{'Area is required'| translate}}.</span>
+                          </div>                           
                         </div>
                       </div>
+  
                     <div class="col-md-6 mb-3">
                       <div class="form-group ">
-                        <label for="city_id" >City</label>
-                        <select  id="city_id"class="form-control"  formControlName="city_id"  >
-                          <option value="" disabled selected>{{'Select_the_City' | translate}}</option>
-                          <option *ngFor="let city of filteredCities" [value]="city.id">
-                           {{ city.name }}
-                         </option>
-                        </select>                      
+                        <label for="city_id" >{{'City' | translate}}<span  class="text-danger">*</span></label>
+                        <ng-select  id="city_id" placeholder="{{'Select_the_City' | translate}}" [items]="filteredCities" bindLabel="translatedName" 
+                        bindValue="id" formControlName="city_id"  >
+                        </ng-select>  
+                        <div *ngIf="signupForm.get('city_id').touched && signupForm.get('city_id').invalid" class="invalid-feedback d-block">
+                          <span *ngIf="signupForm.get('city_id').errors?.['required']">{{'City is required'| translate}}.</span>
+                        </div>                         
                       </div>
                     </div>
                 
                 
-                 
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
-                        <label for="serviceType">Service Type</label>
-                        <input type="text" id="serviceType" class="form-control" formControlName="serviceType" placeholder="{{ 'Enter service type' | translate }}">
+                        <label for="serviceType">{{'Service Type' | translate}}<span   class="text-danger">*</span></label>
+                        <ng-select  placeholder="{{'Select service type' |translate}}" id="serviceType"  [items]="serviceTypes" formControlName="serviceType"  >
+                        </ng-select>
+                        <div *ngIf="signupForm.get('serviceType').touched && signupForm.get('serviceType').invalid" class="invalid-feedback d-block">
+                        <span *ngIf="signupForm.get('serviceType').errors?.['required']">{{'Service Type is required'| translate}}.</span>
                       </div>
+                    </div>
                     </div>
                  
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
-                        <label for="supervisorName">Supervisor Name</label>
-                        <input type="text" id="supervisorName" class="form-control" formControlName="supervisorName" placeholder="{{ 'Enter supervisor name' | translate }}">
+                        <label for="supervisorName">{{'Supervisor Name' | translate}}<span  class="text-danger">*</span></label>
+                        <input type="text" id="supervisorName" class="form-control" placeholder="{{ 'Enter supervisor name' | translate }}" formControlName="supervisorName"  >
+                        <div *ngIf="signupForm.get('supervisorName').touched && signupForm.get('supervisorName').invalid" class="invalid-feedback d-block">
+                          <span *ngIf="signupForm.get('supervisorName').errors?.['required']">{{'Supervisor Name is required'| translate}}.</span>
+                        </div>
                       </div>
                     </div>
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
-                        <label for="supervisorPhone">Supervisor Phone</label><br>
+                        <label for="supervisorName_ar">{{'Supervisor Name in arabic' | translate}}<span  class="text-danger">*</span></label>
+                        <input type="text" id="supervisorName_ar" class="form-control" placeholder="{{ 'Enter supervisor name in arabic' | translate }}" formControlName="supervisorName_ar"  >
+                        <div *ngIf="signupForm.get('supervisorName_ar').touched && signupForm.get('supervisorName_ar').invalid" class="invalid-feedback d-block">
+                          <span *ngIf="signupForm.get('supervisorName_ar').errors?.['required']">{{'Arabic Supervisor Name is required'| translate}}.</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <div class="form-group">
+                        <label for="supervisorPhone">{{'Supervisor Phone' | translate}}</label><br>
                         <app-phone-number
                         [initialPhoneNumber]="signupForm.get('supervisorPhone').value"
                         *ngIf="signupForm"
                         [inputId]="'supervisorPhone'"
+                        [placeholder]="'Enter supervisor phone' | translate"
                         (phoneNumberChanged)="onSupervisorPhoneChanged($event)" >
                        </app-phone-number>               
                              </div>
@@ -183,79 +215,79 @@
                   
                     <div class="col-md-6 mb-3">
                       <div class="form-group">
-                        <label for="bankAccountNumber">Bank Account Number</label>
-                        <input type="text" id="bankAccountNumber" class="form-control" formControlName="bankAccountNumber" placeholder="{{ 'Enter Bank Account Number' | translate }}">
+                        <label for="bankAccountNumber">{{'Bank Account Number' | translate}}</label>
+                        <input type="number" id="bankAccountNumber" class="form-control" formControlName="bankAccountNumber" placeholder="{{ 'Enter Bank Account Number' | translate }}">
                       </div>
                     </div>
                    
                   
-                      <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                          <label for="section_id">Merchant Section</label>
-                          <select id="section_id" class="form-control" formControlName="section_id">
-                            <option value="">{{'Select a section' | translate}}</option>
-                            <option *ngFor="let section of sectionlist" [value]="section.id">
-                              {{ section.name }}
-                            </option>
-                          </select>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                      <div class="form-group">
+                        <label for="section_id">{{'Merchant Section' | translate}}<span  class="text-danger">*</span></label>
+                        <ng-select  placeholder="{{'Select a section' | translate}}" [items]="sectionlist" bindLabel="translatedName" 
+                        bindValue="id" id="section_id"  formControlName="section_id">
+                        </ng-select>
+                        <div *ngIf=" signupForm.get('section_id').touched &&  signupForm.get('section_id').invalid" class="invalid-feedback d-block">
+                          <span *ngIf=" signupForm.get('section_id').errors?.['required']">{{'Section is required'| translate}}.</span>
+                        </div>   
                       </div>
+                    </div>
                                     
                       
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="website">Merchant Website</label>
+                          <label for="website">{{'Merchant Website' | translate}}</label>
                           <input type="text" id="website" class="form-control" formControlName="website" placeholder="https://example.com">
                         </div>
                       </div>
                       
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="whatsup">WhatsApp</label>
+                          <label for="whatsup">{{'WhatsApp' | translate}}</label>
                           <input type="text" id="whatsup" class="form-control" formControlName="whatsup" placeholder="+1234567890">
                         </div>
                       </div>
                       
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="facebook">Facebook</label>
+                          <label for="facebook">{{'Facebook' | translate}}</label>
                           <input type="text" id="facebook" class="form-control" formControlName="facebook" placeholder="facebook.com/yourpage">
                         </div>
                       </div>
                       
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="twitter">Twitter</label>
+                          <label for="twitter">{{'Twitter' | translate}}</label>
                           <input type="text" id="twitter" class="form-control" formControlName="twitter" placeholder="twitter.com/yourhandle">
                         </div>
                       </div>
                       
                       <div class="col-md-6 mb-3">
                         <div class="form-group">
-                          <label for="instagram">Instagram</label>
+                          <label for="instagram">{{'Instagram' | translate}}</label>
                           <input type="text" id="instagram" class="form-control" formControlName="instagram" placeholder="instagram.com/yourprofile">
                         </div>
                       </div>
                       
-              
+              </div>
                   <div class="col-12  mt-4">
                     <div class="d-flex justify-content-end ">
                       <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">{{'Cancel' | translate}}</button>
                       <button type="submit" class="btn btn-primary" (click)="onSubmit()">{{'Register' | translate}}</button>
                       <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                         <div class="spinner-border text-primary avatar-sm" role="status">
-                          <span class="visually-hidden">Loading...</span>
+                          <span class="visually-hidden">{{'Loading...' | translate}}</span>
                         </div>
                       </div> 
                     </div>
                   </div>
-                </div>
+              
                 </form>
                 
           </div>
            <div class="mt-5 text-center">
             
-            <p>© {{year}} Infinite</p>
+            <p>© {{year | translate}} {{'Infinite' | translate }}</p>
           </div> 
   
         </div>

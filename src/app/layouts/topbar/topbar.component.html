@@ -68,7 +68,7 @@
           <!-- item-->
           @for (item of listLang; track $index) {
           <a href="javascript:void(0);" class="dropdown-item notify-item" (click)="setLanguage(item.text, item.lang, item.flag)" [ngClass]="{'active': cookieValue === item.lang}">
-            <img src="{{item.flag}}" alt="user-image" class="me-1" height="12"> <span class="align-middle">{{item.text}}</span>
+            <img src="{{item.flag}}" alt="user-image" class="me-1" height="12"> <span class="align-middle">{{item.text | translate}}</span>
           
           </a>
           }
@@ -100,9 +100,9 @@
               </div>
             </div>
           </div>
-          <ngx-simplebar style="position: relative; width: 300px; height: 500px;">
+          <ngx-simplebar style="position: relative; width: 300px; height: 300px;">
             <ng-container *ngFor="let notification of notifications">
-              <a  [ngClass]="{ 'unseen-notification': !notification.seen }"   class="text-reset notification-item" (click)="navigateToNotification(notification)">
+              <a  tabindex="0" [ngClass]="{ 'unseen-notification': !notification.seen }"   class="text-reset notification-item" (click)="navigateToNotification(notification)" (keydown.enter)="navigateToNotification(notification)" (keydown.space)="navigateToNotification(notification)">
                 <div class="d-flex">
                   <div class="avatar-xs me-3">
                     <span class="avatar-title bg-primary rounded-circle font-size-16">
@@ -110,9 +110,9 @@
                     </span>
                   </div>
                   <div class="flex-grow-1">
-                    <h6 class="mb-1">{{ notification.title }}</h6>
+                    <h6 class="mb-1">{{ notification.translation_data[0].title }}</h6>
                     <div class="font-size-12 text-muted">
-                      <p class="mb-1">{{ notification.description }}</p> 
+                      <p class="mb-1">{{ notification.translation_data[0].description }}</p> 
                       <p class="mb-0"><i class="mdi mdi-clock-outline"></i> {{ notification.createdAt | date: 'short' }}</p>
                     </div>
                   </div>
@@ -139,15 +139,15 @@
           <!-- item-->
           <a class="dropdown-item" routerLink="/private/contacts/profile"><i class="bx bx-user font-size-16 align-middle me-1"></i>
             {{ 'HEADER.LOGIN.PROFILE' | translate}}</a>
-            <a *ngIf="(currentUser | async)?.role.name !=='Admin'" class="dropdown-item" routerLink="/private/contacts/company"><i class="bx bx-home-alt font-size-16 align-middle me-1"></i>
+            <a *ngIf="(currentUser | async)?.role.translation_data[0].name !=='Admin'" class="dropdown-item" routerLink="/private/contacts/company"><i class="bx bx-home-alt font-size-16 align-middle me-1"></i>
               {{ 'HEADER.LOGIN.COMPANY_PROFILE' | translate}}</a>
           <a class="dropdown-item" routerLink="/crypto/wallet" href="javascript: void(0);"><i class="bx bx-wallet font-size-16 align-middle me-1"></i>{{ 'HEADER.LOGIN.MY_WALLET' | translate}}</a>
-          <a class="dropdown-item d-block" (click)="toggleRightSidebar()" ><i class="bx bx-cog font-size-16 align-middle me-1"></i>{{
+          <a tabindex="0" class="dropdown-item d-block" (click)="toggleRightSidebar()" (keydown.enter)="toggleRightSidebar()" (keydown.space)="toggleRightSidebar()"><i class="bx bx-cog font-size-16 align-middle me-1"></i>{{
             'HEADER.LOGIN.SETTINGS' | translate}} </a>
-          <a class="dropdown-item" routerLink="/pages/lock-screen-1"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i>
+          <a tabindex="0" class="dropdown-item" routerLink="/pages/lock-screen-1"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i>
             {{ 'HEADER.LOGIN.LOCK_SCREEN' | translate}}</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item text-danger"  (click)="logout()"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i>
+          <a tabindex="0" class="dropdown-item text-danger"  (click)="logout()" (keydown.enter)="logout()" (keydown.space)="logout()"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i>
             {{ 'HEADER.LOGIN.LOGOUT' | translate}}</a>
         </div>
       </div>

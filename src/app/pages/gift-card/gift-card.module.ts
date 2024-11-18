@@ -15,6 +15,7 @@ import { ViewGiftCardComponent } from './view-gift-card/view-gift-card.component
 import { WidgetModule } from 'src/app/shared/widget/widget.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
   ],
   imports: [
     CommonModule,
+    NgSelectModule,
     BsDatepickerModule,
     FormsModule, 
     UIModule,

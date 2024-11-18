@@ -1,19 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import { FormUtilService } from 'src/app/core/services/form-util.service';
 import { _User } from 'src/app/store/Authentication/auth.models';
 import { selectDataLoading, selectRoleById } from 'src/app/store/Role/role-selector';
 import { addRolelist, getRoleById, updateRolelist } from 'src/app/store/Role/role.actions';
-import { Modules, Permission, RoleListModel } from 'src/app/store/Role/role.models';
+import { Modules, Permission, Role } from 'src/app/store/Role/role.models';
 
 @Component({
   selector: 'app-form-role',
   templateUrl: './form-role.component.html',
   styleUrl: './form-role.component.css'
 })
-export class FormRoleComponent implements OnInit {
+export class FormRoleComponent implements OnInit, OnDestroy {
   
   @Input() type: string;
   roleForm: UntypedFormGroup;
@@ -21,14 +23,14 @@ export class FormRoleComponent implements OnInit {
   formSubmitted = false;
 
   private destroy$ = new Subject<void>();
-  Rolelist$: Observable<any[]>;
-  loading$: Observable<any>;
+  Rolelist$: Observable<Role[]>;
+  loading$: Observable<boolean>;
 
-  role: RoleListModel;
+  role: Role;
   claims: { claimType: Modules; claimValue: Permission[] }[] = [];
 
-  submitted: any = false;
-  error: any = '';
+  submitted: boolean = false;
+  error: string = '';
   isEditing: boolean = false;
   ALLPermissionChecked: boolean = false;
   ALLModulesChecked : boolean = false;
@@ -39,18 +41,19 @@ export class FormRoleComponent implements OnInit {
   merchantClaims: any = null;
   moduleKeys: any[] = [];
   permissionKeys: any[] = [];
-
-
+  originalRoleData: Role = {}; 
+  @ViewChild('formElement', { static: false }) formElement: ElementRef;
 
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute, 
     private router: Router,
+    private formUtilService: FormUtilService,
     public store: Store) {
      
       this.loading$ = this.store.pipe(select(selectDataLoading)); 
-      this.currentRole = this.getCurrentUser()?.role.name;
+      this.currentRole = this.getCurrentUser()?.role.translation_data[0].name;
       if(this.currentRole !== 'Admin'){
         //Modify moduleskeys and permissions key when a merchant or an employee is logged in
          this.merchantClaims = this.getCurrentUser()?.role.claims;
@@ -63,8 +66,9 @@ export class FormRoleComponent implements OnInit {
         this.permissionKeys = Object.keys(Permission).filter(key => isNaN(Number(key))); // Get the permission names
       }
       this.roleForm = this.formBuilder.group({
-        id:[''],
+        id:[null],
         name: ['', Validators.required],
+        name_ar: ['', Validators.required],
         claims: [[]],
         
       });
@@ -102,12 +106,13 @@ export class FormRoleComponent implements OnInit {
       
       // Subscribe to the selected role from the store
       this.store
-        .pipe(select(selectRoleById(roleId)), takeUntil(this.destroy$))
+        .pipe(select(selectRoleById), takeUntil(this.destroy$))
         .subscribe(role => {
           if (role) {
             this.role = role;
-            this.roleForm.patchValue(role);
+            this.patchValueForm(role);
             this.claims = this.role.claims;
+            this.originalRoleData = { ...role };
             this.isEditing = true;
             this.patchClaimsToCheckboxes(role.claims);
 
@@ -116,7 +121,16 @@ export class FormRoleComponent implements OnInit {
     }
    
   }
+  patchValueForm(role: Role){
+    this.roleForm.patchValue(role);
+    this.roleForm.patchValue({
+      name: role.translation_data[0].name,
+      name_ar: role.translation_data[1].name,
+      
+      
+    });
   
+  }
   initializePermission(){
     this.claims = [];
     this.ALLModulesChecked = false;
@@ -136,7 +150,41 @@ export class FormRoleComponent implements OnInit {
     // Allow other checkboxes to be enabled by default
     return false;
 }
+createRoleFromForm(formValue): Role {
+  const role = formValue;
+  role.translation_data = [];
+  const enFields = [
+    { field: 'name', name: 'name' },
+  
+  ];
+  const arFields = [
+    { field: 'name_ar', name: 'name' },
+   
+  ];
+  
+  // Create the English translation if valid
+  const enTranslation = this.formUtilService.createTranslation(role,'en', enFields);
+  if (enTranslation) {
+    role.translation_data.push(enTranslation);
+  }
 
+  // Create the Arabic translation if valid
+  const arTranslation = this.formUtilService.createTranslation(role,'ar', arFields);
+  if (arTranslation) {
+    role.translation_data.push(arTranslation);
+  }
+  if(role.translation_data.length <= 0)
+    delete role.translation_data;
+
+  // Dynamically remove properties that are undefined or null at the top level of city object
+  Object.keys(role).forEach(key => {
+    if (role[key] === undefined || role[key] === null) {
+        delete role[key];  // Delete property if it's undefined or null
+     }
+  });
+      
+ return role;
+}
 
 
   /**
@@ -150,43 +198,36 @@ export class FormRoleComponent implements OnInit {
       Object.keys(this.roleForm.controls).forEach(control => {
         this.roleForm.get(control).markAsTouched();
       });
-      this.focusOnFirstInvalid();
+      this.formUtilService.focusOnFirstInvalid(this.roleForm);
       return;
     }
     this.formError = null;
-      const newData = this.roleForm.value;
+      let newData = this.roleForm.value;
       
        if(!this.isEditing)
         {                   
               //Dispatch Action
               delete newData.id;
+              newData = this.createRoleFromForm(newData);
               this.store.dispatch(addRolelist({ newData}));
         }
         else
-        {
-          this.store.dispatch(updateRolelist({ updatedData: newData }));
+        { 
+          const updatedDta = this.formUtilService.detectChanges(this.roleForm, this.originalRoleData);
+          if (Object.keys(updatedDta).length > 0) {
+            const changedData = this.createRoleFromForm(updatedDta);
+            changedData.id =  this.roleForm.value.id;
+            this.store.dispatch(updateRolelist({ updatedData: changedData }));
+          }
+          else{
+            this.formError = 'Nothing has been changed!!!';
+            this.formUtilService.scrollToTopOfForm(this.formElement);
+          }
         }
    
   }
-  private focusOnFirstInvalid() {
-    const firstInvalidControl = this.getFirstInvalidControl();
-    if (firstInvalidControl) {
-      firstInvalidControl.focus();
-    }
-  }
-
-  private getFirstInvalidControl(): HTMLInputElement | null {
-    const controls = this.roleForm.controls;
-    for (const key in controls) {
-      if (controls[key].invalid) {
-        const inputElement = document.getElementById(key) as HTMLInputElement;
-        if (inputElement) {
-          return inputElement;
-        }
-      }
-    }
-    return null;
-  }
+ 
+  
   hasPermission(module: string, permission: string): boolean {
     const moduleEnum = Modules[module as keyof typeof Modules];
     const permissionEnum = Permission[permission as keyof typeof Permission];
