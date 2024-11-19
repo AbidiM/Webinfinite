@@ -1,5 +1,5 @@
 <div class="container-fluid">
-<app-page-title title="Company Profile Details" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+<app-page-title title="{{'Company Profile Details' | translate}}" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 <div #formElement class="row">
     <div class="col-19">
         <div class="card">
@@ -28,7 +28,7 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                         <label for="section_id">{{'Merchant Section' | translate}}</label>
-                    <ng-select placeholder="{{'Select a section' | translate}}" [items]="sectionlist" bindLabel="name" 
+                    <ng-select placeholder="{{'Select a section' | translate}}" [items]="sectionlist" bindLabel="translatedName" 
                         bindValue="id" id="section_id"  formControlName="section_id">
                     </ng-select>
                     </div>
@@ -36,7 +36,6 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label for="serviceType">{{'Service Type' | translate}}</label>
-                            <input type="text" id="serviceType" class="form-control" formControlName="serviceType" placeholder="{{ 'Enter service type' | translate }}"    >
                             <ng-select  placeholder="{{'Select service type' |translate}}" id="serviceType"  [items]="serviceTypes" formControlName="serviceType"  >
                             </ng-select>
                         </div>
@@ -119,7 +118,7 @@
                     <div class="col-md-6 mb-3">
                     <div class="form-group">
                         <label for="country_id" >{{'Country' | translate}}</label>
-                        <ng-select  id="country_id" placeholder="{{'Select_the_Country' |translate}}" [items]="countrylist" bindLabel="translatedName" 
+                        <ng-select  id="country_id" placeholder="{{'Select_the_Country' |translate}}" [items]="filteredCountries" bindLabel="translatedName" 
                         bindValue="id"  formControlName="country_id" (change)="onChangeCountrySelection($event)" >
                         </ng-select>  
                     </div>
@@ -127,7 +126,7 @@
 
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
-                        <label for="area_id">{{'Area' | translate}}</label>
+                        <label for="area_id">{{'area' | translate}}</label>
                         <ng-select  id="area_id"  formControlName="area_id" placeholder="{{'Select_the_Area' |translate}}" [items]="filteredAreas" bindLabel="translatedName" 
                         bindValue="id" (change)="onChangeAreaSelection($event)" >
                         </ng-select>                         

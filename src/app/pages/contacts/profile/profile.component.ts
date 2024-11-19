@@ -29,6 +29,10 @@ export class ProfileComponent  {
   formError: string | null = null;
   formSubmitted = false;
   fieldTextType!: boolean;
+  fieldTextType1!: boolean;
+
+  fieldTextType2!: boolean;
+
   passwordMatchError: boolean = false;
 
 
@@ -108,6 +112,12 @@ passwordMatchValidator(formGroup: FormGroup) {
  */
      toggleFieldTextType() {
       this.fieldTextType = !this.fieldTextType;
+    }
+    toggleFieldTextType1() {
+      this.fieldTextType1 = !this.fieldTextType1;
+    }
+    toggleFieldTextType2() {
+      this.fieldTextType2 = !this.fieldTextType2;
     }
   onSubmit() {
     this.formSubmitted = true;

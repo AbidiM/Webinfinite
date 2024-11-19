@@ -36,7 +36,7 @@ export class StoresComponent implements OnInit {
   currentPage : number = 1;
 
   columns : any[]= [
-    { property: 'translation_data[0].name', label: 'Branch Name' },
+    { property: 'translation_data[0].name', label: 'Store_Name' },
     { property: 'merchant.translation_data[0].name', label: 'Merchant' },
     { property: 'city.translation_data[0].name', label: 'City' },
     { property: 'totalOffres', label: 'Total Offers' },

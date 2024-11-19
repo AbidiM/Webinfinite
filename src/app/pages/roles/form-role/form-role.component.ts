@@ -9,6 +9,7 @@ import { _User } from 'src/app/store/Authentication/auth.models';
 import { selectDataLoading, selectRoleById } from 'src/app/store/Role/role-selector';
 import { addRolelist, getRoleById, updateRolelist } from 'src/app/store/Role/role.actions';
 import { Modules, Permission, Role } from 'src/app/store/Role/role.models';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-form-role',
@@ -112,7 +113,8 @@ export class FormRoleComponent implements OnInit, OnDestroy {
             this.role = role;
             this.patchValueForm(role);
             this.claims = this.role.claims;
-            this.originalRoleData = { ...role };
+            this.originalRoleData = _.cloneDeep(role);
+            console.log(this.originalRoleData)
             this.isEditing = true;
             this.patchClaimsToCheckboxes(role.claims);
 
@@ -182,7 +184,8 @@ createRoleFromForm(formValue): Role {
         delete role[key];  // Delete property if it's undefined or null
      }
   });
-      
+    delete role.name;
+    delete role.name_ar;  
  return role;
 }
 
@@ -214,7 +217,14 @@ createRoleFromForm(formValue): Role {
         else
         { 
           const updatedDta = this.formUtilService.detectChanges(this.roleForm, this.originalRoleData);
-          if (Object.keys(updatedDta).length > 0) {
+          console.log(this.roleForm.value);
+          console.log(this.originalRoleData);
+          console.log(_.isEqual(this.roleForm.value.claims,this.originalRoleData.claims));
+          if(!_.isEqual(this.roleForm.value.claims,this.originalRoleData.claims)){
+            updatedDta.claims = this.roleForm.value.claims;
+          }
+       
+          if (Object.keys(updatedDta).length > 0 ) {
             const changedData = this.createRoleFromForm(updatedDta);
             changedData.id =  this.roleForm.value.id;
             this.store.dispatch(updateRolelist({ updatedData: changedData }));

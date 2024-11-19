@@ -25,7 +25,36 @@
       }
 
 }
+// Toast positioning adjustments based on the language (RTL vs LTR)
+body[lang='ar'] #toast-container {
+    // For RTL (Arabic), position the toast on the left side
+    right: auto !important;
+    left: 10px !important;  // Adjust as needed
+}
 
+body[lang='ar'] .toast-top-right {
+    // Change the default position for top-right to top-left in RTL
+    right: auto !important;
+    left: 10px !important;
+    top: 10px !important;
+}
+
+body[lang='ar'] .toast-top-left {
+    left: 10px !important;
+    top: 10px !important;
+}
+
+body[lang='ar'] .toast-bottom-right {
+    // Change bottom-right to bottom-left in RTL
+    right: auto !important;
+    left: 10px !important;
+    bottom: 10px !important;
+}
+
+body[lang='ar'] .toast-bottom-left {
+    left: 10px !important;
+    bottom: 10px !important;
+}
 
 @each $color, $value in $theme-colors {
     .toast-#{$color} {

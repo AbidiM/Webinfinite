@@ -1,6 +1,6 @@
 <div class="container-fluid">
 
-  <app-page-title title="Profile Details" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  <app-page-title title="{{'Profile Details' | translate}}" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
   <div class="row">
     <div class="col-lg-12">
@@ -24,7 +24,7 @@
                       </div>
                   </div> -->
                   <div class="row mb-4">
-                    <label for="username" class="col-sm-3 col-form-label">{{'User Name'| translate}}</label>
+                    <label for="username" class="col-sm-3 col-form-label">{{'Username'| translate}}</label>
                     <div class="col-sm-6">
                         <input type="text" class="form-control"formControlName="username" id="username" placeholder="Enter Your UserName">
                         <div class="invalid-feedback">{{'Please enter your username'  | translate}}.</div>
@@ -78,7 +78,7 @@
                     <div class="input-group auth-pass-inputgroup">
                       <input [type]="fieldTextType ? 'text' : 'password'" id="currentPassword" class="form-control" placeholder="{{ 'Enter Your Current Password' | translate }}" formControlName="currentPassword" required>
                       <button class="btn btn-light ms-0" type="button" id="password-addon">
-                        <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
+                        <i  class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
                       </button>
                       <div *ngIf="passwordForm.get('currentPassword').touched && passwordForm.get('currentPassword').invalid" class="invalid-feedback d-block">
                         <span *ngIf="passwordForm.get('currentPassword').errors?.['required']">{{'Please enter your current password.'| translate}}.</span>
@@ -90,9 +90,9 @@
                   <label for="newPassword" class="col-sm-3 col-form-label">{{'New Password'|translate}}</label>
                   <div class="col-sm-6">
                     <div class="input-group auth-pass-inputgroup">
-                      <input [type]="fieldTextType ? 'text' : 'password'" id="newPassword" class="form-control" placeholder="{{ 'Enter Your New Password' | translate }}" formControlName="newPassword" required>
+                      <input [type]="fieldTextType1 ? 'text' : 'password'" id="newPassword" class="form-control" placeholder="{{ 'Enter Your New Password' | translate }}" formControlName="newPassword" required>
                       <button class="btn btn-light ms-0" type="button" id="password-addon">
-                        <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
+                        <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType1, 'mdi-eye-outline': fieldTextType1}" (click)="toggleFieldTextType1()"></i>
                       </button>
                       <div *ngIf="passwordForm.get('newPassword').touched && passwordForm.get('newPassword').invalid" class="invalid-feedback d-block">
                         <span *ngIf="passwordForm.get('newPassword').errors?.['required']">{{'Please enter your current password.'| translate}}.</span>
@@ -104,9 +104,9 @@
                   <label for="confirmpwd" class="col-sm-3 col-form-label">{{'Confirm Password'|translate}}</label>
                   <div class="col-sm-6">
                     <div class="input-group auth-pass-inputgroup">
-                      <input [type]="fieldTextType ? 'text' : 'password'" id="confirmpwd" class="form-control" placeholder="{{ 'Confirm Your New Password' | translate }}" formControlName="confirmpwd" (keyup)="checkPasswordMatch()" required>
+                      <input [type]="fieldTextType2 ? 'text' : 'password'" id="confirmpwd" class="form-control" placeholder="{{ 'Confirm Your New Password' | translate }}" formControlName="confirmpwd" (keyup)="checkPasswordMatch()" required>
                       <button class="btn btn-light ms-0" type="button" id="password-addon">
-                        <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}" (click)="toggleFieldTextType()"></i>
+                        <i class="mdi mdi-eye-outline" [ngClass]="{'mdi-eye-off-outline': !fieldTextType2, 'mdi-eye-outline': fieldTextType2}" (click)="toggleFieldTextType2()"></i>
                       </button>
                       <div *ngIf="passwordForm.get('confirmpwd').touched && passwordForm.get('confirmpwd').invalid" class="invalid-feedback d-block">
                         <span *ngIf="passwordForm.get('confirmpwd').errors?.['required']">{{'Please confirm your new password'| translate}}.</span>

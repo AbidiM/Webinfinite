@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, EventEmitter, Input, Output, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import intlTelInput from 'intl-tel-input';
  import ar from 'intl-tel-input/i18n/ar';
@@ -9,7 +10,7 @@ import { CookieService } from 'ngx-cookie-service';
   templateUrl: './phone-number.component.html',
   styleUrl: './phone-number.component.css'
 })
-export class PhoneNumberComponent {
+export class PhoneNumberComponent implements AfterViewInit {
   
   @Output() phoneNumberChanged = new EventEmitter<string>();
   @Input() initialPhoneNumber: string;

@@ -1,12 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-stat',
   templateUrl: './stat.component.html',
   styleUrls: ['./stat.component.scss']
 })
-export class StatComponent implements OnInit {
+export class StatComponent  {
 
   @Input() title: string;
   @Input() value: string;
@@ -15,7 +14,6 @@ export class StatComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  
 
 }

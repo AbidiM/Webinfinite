@@ -250,3 +250,10 @@ aw-wizard-navigation-bar.horizontal.large-empty-symbols ul.steps-indicator li:no
     margin-right: var(--iti-arrow-padding);
     margin-left: 0;
   }
+  // setting position for toastr
+  .toast {
+    left: 10px !important;  // Adjust the left positioning
+    right: auto !important; // Disable the right positioning
+    bottom: 10px !important; // Adjust the bottom positioning
+  }
+  

@@ -11,7 +11,7 @@
                 <div *ngIf="formError" class="alert alert-danger">{{ formError }}</div>
                   <div class="row">
                       <div class="col-md-6 mb-3">
-                          <label for="name">{{'Name'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                          <label for="name">{{'Name_coupon'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                           <input class="form-control" id="name" formControlName="name" type="text" [readonly]="type==='view'"/>
                           <div *ngIf="formCoupon.get('name').invalid && formCoupon.get('name').touched" class="text-danger">
                               {{'Name is required'|translate}}
@@ -19,7 +19,7 @@
                       </div>
                      
                       <div class="col-md-6 mb-3">
-                          <label for="name_ar">{{'Translated Name'|translate}}</label>
+                          <label for="name_ar">{{'Name_coupon_arabic'|translate}}</label>
                           <input class="form-control" id="name_ar" formControlName="name_ar" type="text" [readonly]="type==='view'"/>
                           <div *ngIf="formCoupon.get('name_ar').invalid && formCoupon.get('name_ar').touched" class="text-danger">
                               {{'Translated name is required'|translate}}
@@ -62,7 +62,7 @@
                       </div> 
                     
                       <div *ngIf="currentRole === 'Admin'" class="col-md-6 mb-3">
-                        <label for="merchant_id">{{'Merchant Name'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                        <label for="merchant_id">{{'Merchant_Name'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                         <ng-select [readonly]="type === 'view'" id="merchant_id"  placeholder="{{'Select_the_merchant' |translate}}" [items]="merchantList" bindLabel="translatedName" 
                         bindValue="id"  formControlName="merchant_id" (change)="onChangeMerchantSelection($event)">
                         </ng-select>
@@ -76,7 +76,7 @@
                         <ng-select
                           [readonly]="type === 'view'"
                           id="stores"
-                          [placeholder]="'Select Stores'| translate"
+                          [placeholder]="'Select_Stores'| translate"
                           [items]="storeList"
                           bindLabel="translatedName" 
                           bindValue="id"
@@ -90,7 +90,7 @@
                         </div>
                       </div>
                       <div class="col-md-6 mb-3">
-                        <label for="startDateCoupon">{{'Start Date'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
+                        <label for="startDateCoupon">{{'Start_Date'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                         <input bsDatepicker class="form-control" id="startDateCoupon" placeholder="yyyy-mm-dd" formControlName="startDateCoupon" [bsConfig]="bsConfig"  [readonly]="type==='view'"/>
                         <div *ngIf="formCoupon.get('startDateCoupon').invalid && formCoupon.get('startDateCoupon').touched" class="text-danger">
                           {{'Start Date is required'|translate}}
@@ -99,7 +99,7 @@
                     
                       <div class="col-md-6 mb-3">
                         <label for="endDateCoupon">{{'End Date'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
-                        <input bsDatepicker class="form-control" id="endDateCoupon" placeholder="yyyy-mm-dd" formControlName="endDateCoupon"  [readonly]="type==='view'"/>
+                        <input bsDatepicker class="form-control" id="endDateCoupon" placeholder="yyyy-mm-dd" formControlName="endDateCoupon" [bsConfig]="bsConfig" [readonly]="type==='view'"/>
                         <div *ngIf="formCoupon.get('endDateCoupon').invalid && formCoupon.get('endDateCoupon').touched" class="text-danger">
                           {{'End Date is required'|translate}}
                         </div>
@@ -163,7 +163,7 @@
                  <div class="col-md-6 mb-3">
                   <label for="couponLogo">{{'Upload Coupon Logo'|translate}}<span *ngIf="type !== 'view'" class="text-danger">*</span></label>
                
-                  <app-image-upload [id]="'couponLogo'" [type]="'logo'" [label]="'Upload coupon Logo' | translate" [existantImage]="existantcouponLogo" [filename]="fileName" [alt]="'Coupon Logo'" [disabled]="type ==='view'" (logoUploaded)="uploadCouponLogo($event)"></app-image-upload>
+                  <app-image-upload [id]="'couponLogo'" [type]="'logo'" [label]="'Upload Coupon Logo' | translate" [existantImage]="existantcouponLogo" [filename]="fileName" [alt]="'Coupon Logo'" [disabled]="type ==='view'" (logoUploaded)="uploadCouponLogo($event)"></app-image-upload>
 
                   <div *ngIf="formCoupon.get('couponLogo').invalid && formCoupon.get('couponLogo').touched" class="text-danger">
                     {{'Coupon Logo is required'|translate}}

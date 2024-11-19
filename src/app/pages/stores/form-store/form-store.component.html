@@ -68,7 +68,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                   <div class="form-group">
-                    <label for="area_id">{{'Area'| translate}}</label>
+                    <label for="area_id">{{'area'| translate}}</label>
                     <ng-select [readonly]="type === 'view'" placeholder="{{'Select_the_Area' | translate}}" [items]="filteredAreas" bindLabel="translatedName" 
                     bindValue="id"  id="area_id"  formControlName="area_id" (change)="onChangeAreaSelection($event)" >
                     </ng-select>  
@@ -95,6 +95,7 @@
                       <label for="phone" >{{'Phone Number' | translate}} <span *ngIf="type !== 'view'" class="text-danger">*</span></label><br>
                      <app-phone-number
                      [disabled]="type === 'view'"
+                     *ngIf="storeForm"
                      [placeholder]="'Enter store phone' | translate"
                      [initialPhoneNumber]="storeForm.get('phone').value"
                      (phoneNumberChanged)="onPhoneNumberChanged($event)" >
@@ -109,7 +110,7 @@
                   <div class="col-md-6 mb-3">
                         <div class="form-group">
                           <label for="images">{{ 'Store_Pictures' | translate }}</label>
-                          <dropzone [disabled]="type === 'view'"class="dropzone" [config]="dropzoneConfig" [message]="'Drop Images here or click to upload.'" (success)="onUploadSuccess($event)">
+                          <dropzone [disabled]="type === 'view'"class="dropzone" [config]="dropzoneConfig" [message]="'Drop Images here or click to upload.' | translate" (success)="onUploadSuccess($event)">
                           </dropzone>
                         </div>
                   </div>
@@ -164,7 +165,7 @@
                       </ng-container>
                       <ng-template #editModeButtons>
                         <button type="button" id="cancel-btn" class="btn btn-outline-secondary me-2" (click)="onCancel()">{{ 'Cancel' | translate }}</button>
-                        <button type="submit" class="btn btn-success" (click)="onSubmit()">{{ (type === 'create' ? 'Add_store' : 'Update_store') | translate }}</button>
+                        <button type="submit" class="btn btn-success" (click)="onSubmit()">{{ (type === 'create' ? 'Add_store' : 'update_store') | translate }}</button>
                         <div id="elmLoader" class="loader" *ngIf="loading$ | async">
                           <div class="spinner-border text-primary avatar-sm" role="status">
                             <span class="visually-hidden">{{'Loading...' | translate}}</span>

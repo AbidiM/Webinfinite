@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, Input } from '@angular/core';
 
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -7,7 +8,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
   templateUrl: './transaction.component.html',
   styleUrls: ['./transaction.component.scss']
 })
-export class TransactionComponent implements OnInit {
+export class TransactionComponent {
 
   modalRef?: BsModalRef;
 
@@ -23,9 +24,6 @@ export class TransactionComponent implements OnInit {
   }>;
 
   constructor(private modalService: BsModalService) { }
-
-  ngOnInit() {
-  }
 
   /**
    * Open modal

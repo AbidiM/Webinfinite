@@ -506,10 +506,12 @@
       }
     }
   },
+  "Manager Name in Arabic": "Manager Name in Arabic",
   "Coupon_Approval_List": "Coupon Approval List",
   "Pending_merchants": "Pending Merchants",
   "Merchant_Name": "Merchant Name",
   "Start_Date": "Start Date",
+  "Number Of Use for Customer": "Number Of Use for Customer",
   "End_Date": "End Date",
   "Request_Date": "Request Date",
   "Decline": "Decline",
@@ -603,6 +605,8 @@
   "Manager Name": "Manager Name",
   "Manager Phone": "Manager Phone",
   "Upload Coupon Logo": "Upload Coupon Logo",
+  "PM": "PM",
+  "AM": "AM",
   "Coupon Logo is required": "Coupon Logo is required",
   "Coupon Type": "Coupon Type",
   "Free":"Free",
@@ -684,6 +688,9 @@
   "Edit_merchant": "Edit Merchant",
   "View_merchant":"View Merchant",
   "Merchant Logo":"Merchant Logo",
+  "Select_Stores": "Select Stores",
+  "Name_coupon_arabic":"Name_coupon_arabic",
+  "Name_coupon": "Coupon Name",
   "Qr Merchant": "Qr Merchant",
   "id_number is required": "National ID is required",
   "Select_the_service_type": "Select the service type",
@@ -770,6 +777,7 @@
       "Permissions":"Permissions",
       "First_Name": "First Name",
       "Last_Name": "Last Name",
+      "View_role": "View role",
       "First_Name in arabic": "First Name in Arabic",
       "Last_Name in arabic": "Last Name in Arabic",
       "Enter_the_Bank_AccountNumber": "Enter the Bank Account Number",
@@ -799,7 +807,62 @@
       "Register as a Merchant": "Register as a Merchant",
       "ID Number": "ID Number",
       "Operator": "Operator",
-      "Continue as": "Continue as"
+      "Continue as": "Continue as",
+      "Store_Name in arabic": "Store Name in Arabic",
+      "Store_url": "Store URL",
+      "Enter store phone": "Enter store phone",
+      "Drop Images here or click to upload.": "Drop Images here or click to upload.",
+      "Profile Details": "Profile Details",
+      "My Profile": "My Profile",
+      
+        "Welcome Back!": "Welcome Back!",
+        "Infinite Dashboard": "Infinite Dashboard",
+        "Admin's company": "Admin's company",
+        "Revenue": "Revenue",
+        "View Profile": "View Profile",
+        "Monthly Earning": "Monthly Earning",
+        "This month": "This month",
+        "From previous period": "From previous period",
+        "View More": "View More",
+        "We craft digital, graphic and dimensional thinking.": "We craft digital, graphic and dimensional thinking.",
+        "Coupons Sales": "Coupons Sales",
+        "Week": "Week",
+        "Month": "Month",
+        "Year": "Year",
+        "Customer's Rating": "Customer's Rating",
+        "Number of customers purchased from visitors": "Number of customers purchased from visitors",
+        "More payment methods": "More payment methods",
+        "Latest Merchant Transactions": "Latest Merchant Transactions",
+        "Amount": "Amount",
+        "Action": "Action",
+        "Gift Cards": "Gift Cards",
+        "Merchant Branches": "Merchant Branches",
+        "Order ID": "Order ID",
+        "Billing Name": "Billing Name",
+        "Date": "Date",
+        "Total": "Total",
+        "Payment Status": "Payment Status",
+        "Payment Method": "Payment Method",
+        "View Details": "View Details",
+        "Latest Customer Transactions": "Latest Customer Transactions",
+        "Roles": "Roles",
+        "Company Profile Details": "Company Profile Details",
+        "Company Name": "Company Name",
+        "Enter merchant name": "Enter merchant name",
+        "Company Name is required": "Company Name is required",
+        "Company Name in arabic": "Company Name in arabic",
+        "Enter merchant name in arabic": "Enter merchant name in arabic",
+        "Arabic Company Name is required": "Arabic Company Name is required",
+        "update_company_profile": "Update Company Profile"
+
+
+
+
+      
+      
+
+
+
 
 
   

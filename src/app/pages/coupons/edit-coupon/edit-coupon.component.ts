@@ -10,6 +10,6 @@ export class EditCouponComponent implements OnInit{
 breadCrumbItems: Array<object>;
 
 ngOnInit() {
-  this.breadCrumbItems = [{ label: 'Coupons' }, { label: 'Edit_coupon', active: true }];
+  this.breadCrumbItems = [{ label: 'Coupons' }, { label: 'update_coupon', active: true }];
 }
 }

@@ -60,6 +60,7 @@
     },
     "LOGIN": {
       "PROFILE": "الملف الشخصي",
+      "COMPANY_PROFILE": "الملف الشخصي للشركة",
       "MY_WALLET": "محفظتي",
       "SETTINGS": "الإعدادات",
       "LOCK_SCREEN": "قفل الشاشة",
@@ -152,15 +153,15 @@
       }
     },
     "COUPONMANAGEMENT": {
-      "TEXT": "إدارة القسائم",
+      "TEXT": "إدارة الكوبونز",
       "LIST": {
-        "COUPON": "القسائم",
+        "COUPON": "كوبونز",
         "FLASHDEALS": "عروض فلاش",
         "DEALOFTHEDAY": "عرض اليوم"
       }
     },
     "COUPONAPPROVAL": {
-      "TEXT": "الكوبونات المعلقة"
+      "TEXT": "الكوبونز المعلقة"
      
     },  
     "PENDINGGIFTS":{
@@ -170,7 +171,7 @@
       "TEXT": "المتاجر"
     },
     "PENDINGSTORES":{
-      "TEXT": "الفروع المعلقة"
+      "TEXT": "المتاجر المعلقة"
     },
     "GIFTS": {
       "TEXT": "الهدايا"
@@ -185,7 +186,7 @@
       "TEXT": "عروض التسويق"
     },
     "SPECIALCOUPONS": {
-      "TEXT": "قسائم خاصة"
+      "TEXT": "كوبونز خاصة"
     },
     "SYSTEMLADMINISTRATION": {
       "TEXT": "إدارة النظام"
@@ -301,7 +302,7 @@
       "TEXT": "المناطق"
     },
     "DEPARTMENTMANAGEMENT": {
-      "TEXT": "إدارة الأقسام"
+      "TEXT": "إدارة الكوبونز"
     },
     "DEPARTMENTLIST": {
       "TEXT": "قائمة الأقسام"
@@ -544,16 +545,16 @@
     "Edit": "تعديل",
     "View": "استعراض",
     "Add new user": "إضافة مستخدم جديد",
-    "Add new coupon": "إضافة قسيمة",
+    "Add new coupon": "إضافة كوبون",
     "Translated Name":"الاسم المترجم",
     "Translated name is required": "الاسم المترجم مطلوب",
     "Terms and Conditions": "الشروط والأحكام",
     "Terms and Conditions are required": "الشروط والأحكام مطلوبة",
     "Translated Terms and Conditions": "الشروط والأحكام المترجمة",
     "Translated Terms and Conditions are required": "الشروط والأحكام المترجمة مطلوبة",
-    "Coupon Code":"رمز القسيمة",
-    "URL Store":"رابط متجر القسيمة",
-    "URL Store is required":"رابط متجر القسيمة مطلوب",
+    "Coupon Code":"رمز الكوبونز",
+    "URL Store":"رابط متجر الكوبونز",
+    "URL Store is required":"رابط متجر الكوبونز مطلوب",
     "Country is required": "البلد مطلوب",
     "area": "المنطقة",
     "areas": "المناطق",
@@ -573,20 +574,29 @@
     "Manager Name is required": "اسم المسؤول مطلوب",
     "Manager Phone": "هاتف المسؤول",
     "Manager Phone is required": "هاتف المسؤول مطلوب",
-    "Start_Date": "تاريخ بداية القسيمة",
-    "Start Date is required": "تاريخ بداية القسيمة مطلوب",
-    "End Date":"تاريخ نهاية القسيمة",
-    "End Date is required": "تاريخ نهاية القسيمة مطلوب",
-    "Upload Coupon Logo": "تحميل صورة القسيمة",
-    "Coupon Logo is required":"تحميل صورة القسيمة مطلوب",
+    "Start_Date": "تاريخ بداية الكوبونز",
+    "Start Date is required": "تاريخ بداية الكوبونز مطلوب",
+    "End Date":"تاريخ نهاية الكوبونز",
+    "Manager Name in Arabic": "اسم المدير باللغة العربية",
+    "Number Of Use for Customer": "عدد مرات الاستخدام للعميل",
+    "End Date is required": "تاريخ نهاية الكوبونز مطلوب",
+    "Upload Coupon Logo": "تحميل صورة الكوبونز",
+    "PM":"مساء",
+    "AM": "صباحا",
+    "Coupon Logo is required":"تحميل صورة الكوبونز مطلوب",
     "Upload Merchant Logo":"تحميل شعارالتاجر",
     "Merchant Logo is required": " صورة التاجر مطلوبة",
-    "Coupon Type": "نوع القسيمة",
+    "Coupon Type": "نوع الكوبونز",
+    "Section_Order_Appearance": "ترتيب ظهور القسم",
+    "Category_Order_Appearance": "ترتيب ظهور الفئة",
+    "Select_Stores": "اختر المتاجر",
+    "Name_coupon_arabic": "اسم الكوبونز بالعربية",
+    "Name_coupon": "اسم الكوبونز",
     "Free": "مجاني",
     "Discount Percent": "نسبة الخصم",
     "Discount Amount" : "مبلغ الخصم",
     "Service Price": "سعر الخدمة",
-    "Coupon Type is required": "نوع القسيمة مطلوب",
+    "Coupon Type is required": "نوع الكوبون مطلوب",
     "Value Before Discount": "القيمة قبل الخصم",
     "Value Before Discount is required": "القيمة قبل الخصم مطلوبة",
     "Value After Discount": "القيمة بعد الخصم",
@@ -595,14 +605,14 @@
     "Payment Discount Rate is required": "معدل خصم الدفع مطلوب ",
     "Cancel":"الغاء",
     "Name": "الإسم",
-    "Add Coupon": "اضافة قسيمة",
-    "Coupon_Approval_List": "قائمة الموافقة على القسائم",
+    "Add coupon": "اضافة كوبون",
+    "Coupon_Approval_List": "قائمة الموافقة على الكوبونز",
     "Request_Date": "تاريخ الطلب",
     "Decline": "رفض",
     "No_items_available": "لا توجد عناصر متاحة",
     "Title":"العنوان",
     "Loading...":"...تحميل",
-    "update_coupon": "تعديل القسيمة",
+    "update_coupon": "تعديل الكوبون",
     "Employee_Basic_Informations": "المعلومات الأساسية للموظف",
     "Employee_Permissions": "صلاحيات الموظف",
     "Edit_employee": "تعديل الموظف",
@@ -656,8 +666,8 @@
     "Select_the_Area": "اختر المنطقة",
     "Select_the_City": "اختر المدينة",
     "Select_the_Role": "اختر الوظيفة",
-    "Coupons_List": "قائمة القسائم",
-    "New_Coupon": "قسيمة جديدة",
+    "Coupons_List": "قائمة الكوبونز",
+    "New_Coupon": "كوبون جديد",
     "Description": "الوصف",
     "Select_the_merchant": "اختر التاجر",
     "Store is required": "المتجر ضروري",
@@ -675,7 +685,8 @@
     "Role_List": "قائمة الوظائف",
     "role_name": "اسم الوظيفة",
     "role name is required": "اسم الوظيفة ضروري",
-    "Edit_role": "تحرير الوظيفة",
+    "Edit_role": "تعديل الوظيفة",
+    "role_name in arabic":"اسم الوظيفة بالعربي",
     "Add_role": "إضافة وظيفة",
     "Cities_List": "قائمة المدن",
     "New_City": "مدينة جديدة",
@@ -705,6 +716,7 @@
     "New_GiftCard": "بطاقة هدايا جديدة",
     "GiftCard_List": "قائمة بطاقات الهدايا",
     "Pending_gift_cards": "بطاقات الهدايا المعلقة",
+    "Pending_merchants": "",
     "Add gift card":"إضافة بطاقة هدية",
     "Name_in_arabic": "الاسم باللغة العربية",
     "Name in arabic is required": "الاسم باللغة العربية مطلوب",
@@ -727,7 +739,7 @@
     "Next": "التالي",
     "update_role": "تحديث وظيفة",
     "View_store": "عرض المتجر",
-    "View_coupon": "عرض القسيمة",
+    "View_coupon": "عرض الكوبون",
     "View_country": "عرض البلد",
     "View_city": "عرض المدينة",
     "View_area": "عرض المنطقة",
@@ -783,10 +795,10 @@
       "Employees": "الموظفين",
       "Customers": "العملاء",
       "Stores": "المتاجر",
-      "Coupons": "القسائم",
+      "Coupons": "الكوبونز",
       "Gift_Cards": "بطاقات الهدايا",
       "Offers": "العروض",
-      "Special_Coupons": "قسائم خاصة",
+      "Special_Coupons": "كوبونز خاصة",
       "Role": "الوظيفة",
       "Merchant_Wallet": "محفظة التاجر",
       "Merchant_Invoices": "فواتير التاجر",
@@ -799,7 +811,7 @@
       "Notification_Management": "إدارة الإشعارات",
       "Payment": "الدفع",
       "Subscription_Reports": "تقارير الاشتراكات",
-      "Coupon_Reports": "تقارير القسائم",
+      "Coupon_Reports": "تقارير الكوبونز",
       "Card_Reports": "تقارير البطاقات",
       "Subscriptions": "الاشتراكات",
       "Company_Subscriptions": "اشتراكات الشركة",
@@ -855,7 +867,63 @@
       "Register as a Merchant": "سجل كتاجر",
       "Operator": "أنفنيت",
       "Merchant": "تاجر",
-      "Continue as": "تابع"
+      "Continue as": "تابع",
+      "Store_Name in arabic": "اسم المتجر بالعربية",
+      "Store_url": "رابط المتجر",
+      "Enter store phone": "أدخل هاتف المتجر",
+      "Drop Images here or click to upload.": "اسحب الصور هنا أو انقر للتحميل.",
+      "Profile Details": "تفاصيل الملف الشخصي",
+      "My Profile": "ملفي الشخصي",
+        "Welcome Back!": "أهلاً بعودتك!",
+        "Infinite Dashboard": "لوحة القيادة أنفنيت",
+        "Admin's company": "شركة المسؤول",
+        "Revenue": "الإيرادات",
+        "View Profile": "عرض الملف الشخصي",
+        "Monthly Earning": "الدخل الشهري",
+        "This month": "هذا الشهر",
+        "From previous period": "من الفترة السابقة",
+        "View More": "عرض المزيد",
+        "We craft digital, graphic and dimensional thinking.": "نحن نصنع التفكير الرقمي والرسومي والأبعاد",
+        "Coupons Sales": "مبيعات الكوبونات",
+        "Week": "أسبوع",
+        "Month": "شهر",
+        "Year": "سنة",
+        "Customer's Rating": "تقييم العميل",
+        "Number of customers purchased from visitors": "عدد العملاء الذين اشتروا من الزوار",
+        "More payment methods": "طرق الدفع الأخرى",
+        "Latest Merchant Transactions": "أحدث معاملات التجار",
+        "Amount": "المبلغ",
+        "Action": "الإجراء",
+        "Gift Cards": "بطاقات الهدايا",
+        "Merchant Branches": "فروع التاجر",
+        "Order ID": "رقم الطلب",
+        "Billing Name": "اسم الفاتورة",
+        "Date": "التاريخ",
+        "Total": "الإجمالي",
+        "Payment Status": "حالة الدفع",
+        "Payment Method": "طريقة الدفع",
+        "View Details": "عرض التفاصيل",
+        "Latest Customer Transactions": "أحدث معاملات العملاء",
+        "View_role": "عرض الوظيفة",
+        "Roles": "الوظائف",
+        "Company Profile Details": "تفاصيل الملف الشخصي للشركة",
+        "Company Name": "اسم الشركة",
+        "Company Name is required": "اسم الشركة مطلوب",
+        "Company Name in arabic": "اسم الشركة بالعربية",
+        "Arabic Company Name is required": "اسم الشركة بالعربية مطلوب",
+        "update_company_profile": "تحديث الملف الشخصي للشركة"
+
+
+      
+
+
+
+
+      
+      
+
+
+
 
 
 

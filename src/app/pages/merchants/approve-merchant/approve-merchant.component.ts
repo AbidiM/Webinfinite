@@ -40,9 +40,9 @@ itemPerPage: number = 10;
 currentPage : number = 1;
 
 columns : any[]= [
-  { property: 'translation_data[0].name', label: 'Merchant Name' },
+  { property: 'translation_data[0].name', label: 'Merchant_Name' },
   { property: 'user.email', label: 'Email' },
-  { property: 'user.createdAt', label: 'Request Date' },
+  { property: 'user.createdAt', label: 'Request_Date' },
   { property: 'user.status', label: 'Status' },
 ];
   constructor(public toastr:ToastrService,  public store: Store) {

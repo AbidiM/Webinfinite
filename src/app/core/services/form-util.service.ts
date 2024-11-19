@@ -48,9 +48,11 @@ export class FormUtilService{
     for (const key in form.controls) {
       if (form.controls[key].dirty) {
         // Check if the value is different from the original
+        
         if (form.controls[key].value !== data[key]) {
             changedData[key] = form.controls[key].value;
         }
+      
       }
     }
     console.log(changedData);

@@ -2,6 +2,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as _ from 'lodash';
 
 import { select, Store } from '@ngrx/store';
 import { getMerchantById, updateMerchantlist } from 'src/app/store/merchantsList/merchantlist1.action';
@@ -125,6 +126,7 @@ export class CompanyProfileComponent implements OnInit {
     supervisorName_ar: ['', Validators.required],
     supervisorPhone: ['', Validators.required],
     bankAccountNumber: [''],
+    qrCode: [''],
     activationCode:[''],
     merchantName:['', Validators.required],
     merchantName_ar:['', Validators.required],
@@ -146,66 +148,11 @@ export class CompanyProfileComponent implements OnInit {
   globalId : number = null;
 
   ngOnInit() {
-    
-    this.countrylist$ = this.store.select(selectDataCountry);
+    this.fetchCountry();
+    this.fetchAreas();
+    this.fetchCities();
+    this.fetchSection();
 
-    this.countrylist$.subscribe((data) => 
-      { this.filteredCountries = [...data].map(country =>{
-        const translatedName = country.translation_data && country.translation_data[0]?.name || 'No name available';
-    
-        return {
-          ...country,  
-          translatedName 
-        };
-      }).sort((a, b) => {
-        // Sort by translatedName
-        return a.translatedName.localeCompare(b.translatedName);
-      });
-    });   
-
-    this.arealist$ = this.store.select(selectDataArea);
-    this.arealist$.subscribe((data) => { 
-      this.filteredAreas =  [...data].map(area =>{
-        const translatedName = area.translation_data && area.translation_data[0]?.name || 'No name available';
-        return {
-          ...area,  
-          translatedName 
-        };
-      }).sort((a, b) => {
-        // Sort by translatedName
-        return a.translatedName.localeCompare(b.translatedName);
-      });
-    });
-    
-
-    this.citylist$ = this.store.select(selectDataCity);
-    this.citylist$.subscribe((data) => { 
-      this.filteredCities = [...data].map(city =>{
-        const translatedName = city.translation_data && city.translation_data[0]?.name || 'No name available';
-        return {
-          ...city,  
-          translatedName 
-        };
-      }).sort((a, b) => {
-        // Sort by translatedName
-        return a.translatedName.localeCompare(b.translatedName);
-      });
-    });
-  
-    this.store.select(selectDataSection).subscribe((data) => {
-      this.sectionlist = [...data].map(section => {
-        // Extract the translated name (assuming translation_data[0] exists)
-        const translatedName = section.translation_data && section.translation_data[0]?.name || 'No name available';
-    
-        return {
-          ...section,  // Spread the original section data
-          translatedName // Add the translatedName property for easy binding
-        };
-      }).sort((a, b) => {
-        // Sort by translatedName
-        return a.translatedName.localeCompare(b.translatedName);
-      });
-    });
     this.store.select(selectedMerchant).subscribe(
       merchant => {
         if (merchant) {
@@ -222,7 +169,7 @@ export class CompanyProfileComponent implements OnInit {
 
           this.globalId = merchant.id;
           this.patchValueForm(merchant);
-          this.originalMerchantData = { ...merchant };
+          this.originalMerchantData = _.cloneDeep(merchant);
           this.isEditing = true;
 
         }this.currentMerchant = merchant
@@ -242,35 +189,112 @@ export class CompanyProfileComponent implements OnInit {
       });
     
     }
- 
-
-  onChangeCountrySelection(event: any){
-    const country = event.target.value;
-    if(country){
-      this.arealist$.subscribe(
-        areas => 
-          this.filteredAreas = areas.filter(c =>c.country_id == country )
-      );
+    fetchCountry(){
+      this.store.select(selectDataCountry).subscribe((data) =>{
+        this.filteredCountries = [...data].map(country =>{
+          const translatedName = country.translation_data && country.translation_data[0]?.name || 'No name available';
+      
+          return {
+            ...country,  
+            translatedName 
+          };
+        }).sort((a, b) => {
+          // Sort by translatedName
+          return a.translatedName.localeCompare(b.translatedName);
+        });
+      });
     }
-    else{
+    fetchSection(){
+      this.store.select(selectDataSection).subscribe((data) => {
+        this.sectionlist = [...data].map(section => {
+          // Extract the translated name (assuming translation_data[0] exists)
+          const translatedName = section.translation_data && section.translation_data[0]?.name || 'No name available';
+      
+          return {
+            ...section,  // Spread the original section data
+            translatedName // Add the translatedName property for easy binding
+          };
+        }).sort((a, b) => {
+          // Sort by translatedName
+          return a.translatedName.localeCompare(b.translatedName);
+        });
+      });
+  
+    }
+    fetchAreas(){
+      this.store.select(selectDataArea).subscribe(data =>
+        this.filteredAreas =  [...data].map(area =>{
+        const translatedName = area.translation_data && area.translation_data[0]?.name || 'No name available';
+        return {
+          ...area,  
+          translatedName 
+        };
+      })
+      .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+      }));
+    }
+    fetchCities(){
+      this.store.select(selectDataCity).subscribe((data) => {
+        this.filteredCities = [...data].map(city =>{
+         const translatedName = city.translation_data && city.translation_data[0]?.name || 'No name available';
+     
+         return {
+           ...city,  
+           translatedName 
+         };
+       })
+       .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+       });
+     });
+    }
+
+    onChangeCountrySelection(event: Country){
+      const country = event;
+      console.log(country);
+      this.merchantForm.get('area_id').setValue(null);
+      this.merchantForm.get('city_id').setValue(null);
       this.filteredAreas = [];
-    }
-    
-  }
-  onChangeAreaSelection(event: any){
-    const area = event.target.value;
-    if(area){
-      this.citylist$.subscribe(
-        cities => 
-          this.filteredCities = cities.filter(c =>c.area_id == area )
-      );
-    }
-    else{
       this.filteredCities = [];
+  
+      if(country){
+        this.store.select(selectDataArea).subscribe(data =>
+          this.filteredAreas =  [...data].map(area =>{
+          const translatedName = area.translation_data && area.translation_data[0]?.name || 'No name available';
+          return {
+            ...area,  
+            translatedName 
+          };
+        })
+        .filter(area => area.country_id === country.id)
+        .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+        }));
+      }
+     
+      
     }
-    
-  }
-
+    onChangeAreaSelection(event: Area){
+      const area = event;
+      this.filteredCities = [];
+      this.merchantForm.get('city_id').setValue(null);
+  
+      if(area){
+        this.store.select(selectDataCity).subscribe((data) => {
+          this.filteredCities = [...data].map(city =>{
+           const translatedName = city.translation_data && city.translation_data[0]?.name || 'No name available';
+       
+           return {
+             ...city,  
+             translatedName 
+           };
+         })
+         .filter(city => city.area_id === area.id)
+         .sort((a, b) => {return a.translatedName.localeCompare(b.translatedName);
+         });
+       });
+      }
+        
+    }
+  
   onPhoneNumberChanged(phoneNumber: string) {
     this.merchantForm.get('phone').setValue(phoneNumber);
   }
@@ -282,34 +306,42 @@ export class CompanyProfileComponent implements OnInit {
   get f() { return this.merchantForm.controls; }
   createMerchantFromForm(formValue): Merchant {
     const merchant = formValue;
-    merchant.translation_data = [
-      {
-        name: formValue.merchantName? formValue.merchantName: null, 
-        supervisorName: formValue.supervisorName? formValue.supervisorName: null,   
-        language: 'en',        
-      },
-      {
-        name: formValue.merchantName_ar? formValue.merchantName_ar: null ,  
-        supervisorName: formValue.supervisorName_ar? formValue.supervisorName_ar: null ,   
-        language:'ar',              
-      }
+    merchant.translation_data = [];
+    const enFields = [
+      { field: 'merchantName', name: 'name' },
+      { field: 'supervisorName', name: 'supervisorName' }
     ];
-    merchant.translation_data = merchant.translation_data.map(translation => {
-          // Iterate over each property of the translation and delete empty values
-    Object.keys(translation).forEach(key => {
-            if (translation[key] === '' || translation[key] === null || translation[key] === undefined) {
-              delete translation[key];  // Remove empty fields
-            }
-          });
-          return translation; // Return the modified translation object
-        });
-          // Dynamically remove properties that are undefined or null at the top level of city object
+    const arFields = [
+      { field: 'merchantName_ar', name: 'name' },
+      { field: 'supervisorName_ar', name: 'supervisorName' }
+    ];
+   // Create the English translation if valid
+    const enTranslation = this.formUtilService.createTranslation(merchant,'en', enFields );
+    if (enTranslation) {
+      merchant.translation_data.push(enTranslation);
+    }
+   
+    // Create the Arabic translation if valid
+    const arTranslation = this.formUtilService.createTranslation(merchant,'ar', arFields );
+    if (arTranslation) {
+      merchant.translation_data.push(arTranslation);
+    }
+    if(merchant.translation_data.length <= 0)
+      delete merchant.translation_data;
+    // Dynamically remove properties that are undefined or null at the top level of city object
     Object.keys(merchant).forEach(key => {
       if (merchant[key] === undefined || merchant[key] === null) {
           delete merchant[key];  // Delete property if it's undefined or null
        }
     });
-        
+
+   delete merchant.merchantName;  
+   delete merchant.merchantName_ar;    
+   delete merchant.supervisorName;
+   delete merchant.supervisorName_ar;
+   delete merchant.area_id;
+   delete merchant.country_id;
+
    return merchant;
 }
 
@@ -337,10 +369,11 @@ export class CompanyProfileComponent implements OnInit {
       }
           
       newData.id = this.globalId;
-      const updatedDta = this.formUtilService.detectChanges(newData, this.originalMerchantData);
+      const updatedDta = this.formUtilService.detectChanges(this.merchantForm, this.originalMerchantData);
       if (Object.keys(updatedDta).length > 0) {
         const changedData = this.createMerchantFromForm(updatedDta);
         console.log(changedData);
+        changedData.id = newData.id;
         this.store.dispatch(updateMerchantlist({ updatedData: changedData }));
       }
       else{

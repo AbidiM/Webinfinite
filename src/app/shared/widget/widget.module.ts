@@ -8,11 +8,12 @@ import { StatComponent } from './stat/stat.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { PhoneNumberComponent } from './phone-number/phone-number.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [StatComponent, TransactionComponent, PhoneNumberComponent, ImageUploadComponent],
   imports: [
-    
+    TranslateModule,
     CommonModule,
     RouterModule,
     ModalModule.forRoot()

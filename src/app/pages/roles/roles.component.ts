@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
@@ -14,7 +15,7 @@ import { deleteRolelist, fetchRolelistData, updateRolelist } from 'src/app/store
 export class RolesComponent  implements OnInit{
   
   // bread crumb items
-  breadCrumbItems: Array<{}>;
+  breadCrumbItems: Array<object>;
   public Modules = Modules;
   public Permission = Permission;
 
@@ -30,8 +31,8 @@ export class RolesComponent  implements OnInit{
   currentPage : number = 1;
 
   columns : any[]= [
-    { property: 'name', label: 'Title' },
-    { property: 'createdAt', label: 'CreatedAt' },
+    { property: 'translation_data[0].name', label: 'Title' },
+    //{ property: 'createdAt', label: 'CreatedAt' },
     { property: 'status', label: 'Status' },
   ];
 

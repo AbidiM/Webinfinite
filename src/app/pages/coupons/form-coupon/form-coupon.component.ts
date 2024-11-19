@@ -202,19 +202,16 @@ export class FormCouponComponent implements OnInit, OnDestroy{
         .subscribe(coupon => {
           if (coupon) {
             console.log(coupon);
-            coupon.stores = this.bindStore(coupon.stores)
             if(this.currentRole === 'Admin'){
               this.store.dispatch(fetchStorelistData({ page: 1, itemsPerPage: 1000, status:'', merchant_id: coupon.merchant_id}));
-              this.fetchStore(coupon.merchant_id);
+              //this.fetchStore(coupon.merchant_id);
             }
-           console.log(this.storeList);
-            // Patch the form with coupon data
             this.existantcouponLogo = coupon.couponLogo;
             if(coupon.couponLogo){
               this.fileName = coupon.couponLogo.split('/').pop();
             }
             
-            this.patchValueForm(coupon);
+             this.patchValueForm(coupon);
             this.originalCouponData = { ...coupon };
             this.isEditing = true;
 
@@ -223,19 +220,9 @@ export class FormCouponComponent implements OnInit, OnDestroy{
     }
   
 }
-bindStore(stores: any[]){
-  stores = [...stores].map(store =>{
-    const translatedName = store.translation_data && store.translation_data[0]?.name || 'No name available';
-    return {
-      ...store,  
-      translatedName 
-    };
-});
-
-return stores;
-}
 patchValueForm(coupon: Coupon){
   this.formCoupon.patchValue(coupon);
+  this.formCoupon.get('stores').setValue(coupon.stores.map(store => store.id));
   this.formCoupon.patchValue({
     name: coupon.translation_data[0].name,
     name_ar: coupon.translation_data[1].name,
@@ -341,7 +328,7 @@ createCouponFromForm(formValue): Coupon{
 
   // Dynamically remove properties that are undefined or null at the top level of city object
     Object.keys(coupon).forEach(key => {
-      if (coupon[key] === undefined || coupon[key] === null) {
+      if (coupon[key] === undefined || coupon[key] === null || coupon[key]==='') {
         delete coupon[key];  // Delete property if it's undefined or null
       }
     });
@@ -351,6 +338,8 @@ createCouponFromForm(formValue): Coupon{
     delete coupon.description_ar;
     delete coupon.termsAndConditions;
     delete coupon.termsAndConditions_ar;
+    delete coupon.managerName;
+    delete coupon.managerName_ar;
   console.log(coupon);
   return coupon;
 
@@ -373,13 +362,14 @@ createCouponFromForm(formValue): Coupon{
       if(this.couponLogoBase64){
         newData.couponLogo = this.couponLogoBase64;
       }
-      newData.stores = this.formCoupon.get('stores').value.map((store) =>(store.id ) );
+      //newData.stores = this.formCoupon.get('stores').value.map((store) =>(store.id ) );
 
       if(!this.isEditing)
       {
          delete newData.codeCoupon;
          delete newData.id;
          newData = this.createCouponFromForm(newData);
+         console.log(newData);
          this.store.dispatch(addCouponlist({ newData }));
       }
       else
